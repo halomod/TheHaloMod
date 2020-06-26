@@ -57,8 +57,8 @@ def create_canvas(objects, q, d, plot_format="png"):
     else:
         x = "k"
 
-    if not compare:
-        for i, (l, o) in enumerate(objects.items()):
+    for i, (l, o) in enumerate(objects.items()):
+        if not compare:
             y = getattr(o, q)
             ax.plot(
                 getattr(o, x),
@@ -67,8 +67,7 @@ def create_canvas(objects, q, d, plot_format="png"):
                 linestyle=lines[(i // 7) % 4],
                 label=l,
             )
-    else:
-        for i, (l, o) in enumerate(objects.items()):
+        else:
             if i == 0:
                 comp_obj = o
                 continue
@@ -86,9 +85,8 @@ def create_canvas(objects, q, d, plot_format="png"):
     ax.set_xscale("log")
 
     ax.set_yscale(d["yscale"], basey=d.get("basey", 10))
-    if d["yscale"] == "log":
-        if d.get("basey", 10) == 2:
-            ax.yaxis.set_major_formatter(tick.ScalarFormatter())
+    if d["yscale"] == "log" and d.get("basey", 10) == 2:
+        ax.yaxis.set_major_formatter(tick.ScalarFormatter())
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.6, box.height])
@@ -98,10 +96,10 @@ def create_canvas(objects, q, d, plot_format="png"):
 
     buf = io.BytesIO()
 
-    if plot_format == "png":
-        FigureCanvasAgg(fig).print_png(buf)
-    elif plot_format == "pdf":
+    if plot_format == "pdf":
         FigureCanvasPdf(fig).print_pdf(buf)
+    elif plot_format == "png":
+        FigureCanvasAgg(fig).print_png(buf)
     elif plot_format == "svg":
         FigureCanvasSVG(fig).print_svg(buf)
     else:

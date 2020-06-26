@@ -43,7 +43,10 @@ def prepare_deploy():
 def deploy():
     with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
-            run("git clone https://github.com/steven-murray/HMFcalc.git %s" % code_dir)
+            run(
+                "git clone https://github.com/steven-murray/TheHaloMod.git %s"
+                % code_dir
+            )
 
     put("TheHaloMod/secret_settings.py", code_dir + "TheHaloMod/")
     with cd(code_dir):

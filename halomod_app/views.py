@@ -50,15 +50,15 @@ class help(BaseTab):
     template_name = "help.html"
 
 
-class HMFInputBase(FormView):
+class CalculatorInputBase(FormView):
     """
     The form for input.
     """
 
     # Define the needed variables for FormView class
     form_class = forms.HMFInput
-    success_url = "/hmfcalc/"
-    template_name = "hmfform.html"
+    success_url = "/halomod/"
+    template_name = "calculator_form.html"
 
     def cleaned_data_to_hmf_dict(self, form):
         # get all the _params out
@@ -141,7 +141,7 @@ class HMFInputBase(FormView):
         return super().form_valid(form)
 
 
-class HMFInputCreate(HMFInputBase):
+class CalculatorInputCreate(CalculatorInputBase):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         prev_label = self.kwargs.get("label", None)
@@ -157,7 +157,7 @@ class HMFInputCreate(HMFInputBase):
         return kwargs
 
 
-class HMFInputEdit(HMFInputCreate):
+class CalculatorInputEdit(CalculatorInputCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(edit=True)
@@ -168,7 +168,7 @@ class HMFInputEdit(HMFInputCreate):
         Handles GET requests and instantiates a blank version of the form.
         """
         if kwargs.get("label", "") not in self.request.session.get("objects", {}):
-            return HttpResponseRedirect("/hmfcalc/create/")
+            return HttpResponseRedirect("/halomod/create/")
 
         return super().get(request, *args, **kwargs)
 
@@ -196,7 +196,7 @@ def delete_plot(request, label):
         except KeyError:
             pass
 
-    return HttpResponseRedirect("/hmfcalc/")
+    return HttpResponseRedirect("/halomod/")
 
 
 def complete_reset(request):
@@ -206,7 +206,7 @@ def complete_reset(request):
     except KeyError:
         pass
 
-    return HttpResponseRedirect("/hmfcalc/")
+    return HttpResponseRedirect("/halomod/")
 
 
 class ViewPlots(BaseTab):
@@ -229,9 +229,9 @@ class ViewPlots(BaseTab):
             )
         )
 
-    template_name = "hmf_image_page.html"
+    template_name = "image_page.html"
     _is_tab = True
-    tab_id = "/hmfcalc/"
+    tab_id = "/halomod/"
     tab_label = "Calculator"
     top = True
 
@@ -243,7 +243,7 @@ def plots(request, filetype, plottype):
     objects = request.session.get("objects", None)
 
     if not objects:
-        return HttpResponseRedirect("/hmfcalc/")
+        return HttpResponseRedirect("/halomod/")
 
     if filetype not in ["png", "svg", "pdf", "zip"]:
         raise ValueError("{} is not a valid plot filetype".format(filetype))
