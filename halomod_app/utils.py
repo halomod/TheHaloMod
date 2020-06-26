@@ -5,7 +5,9 @@ import logging
 
 import matplotlib.ticker as tick
 from hmf import MassFunction
+from halomod import TracerHaloModel
 from hmf.alternatives.wdm import MassFunctionWDM
+from halomod.wdm import HaloModelWDM
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.backends.backend_pdf import FigureCanvasPdf
 from matplotlib.backends.backend_svg import FigureCanvasSVG
@@ -14,13 +16,13 @@ from matplotlib.figure import Figure
 logger = logging.getLogger(__name__)
 
 
-def hmf_driver(cls=MassFunction, previous=None, **kwargs):
+def hmf_driver(cls=TracerHaloModel, previous=None, **kwargs):
     if previous is None:
         return cls(**kwargs)
-    elif "wdm_model" in kwargs and not isinstance(previous, MassFunctionWDM):
-        return MassFunctionWDM(**kwargs)
-    elif "wdm_model" not in kwargs and isinstance(previous, MassFunctionWDM):
-        return MassFunction(**kwargs)
+    elif "wdm_model" in kwargs and not isinstance(previous, HaloModelWDM):
+        return HaloModelWDM(**kwargs)
+    elif "wdm_model" not in kwargs and isinstance(previous, HaloModelWDM):
+        return TracerHaloModel(**kwargs)
     else:
         this = copy.deepcopy(previous)
 

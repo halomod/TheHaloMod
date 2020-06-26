@@ -229,9 +229,9 @@ class WDMFramework(FrameworkForm):
     )
 
 
-class HMFInput(CompositeForm):
+class FrameworkInput(CompositeForm):
     """
-    Input parameters to the halo mass function.
+    Input parameters to the overall framework
     """
 
     form_list = [

@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from hmf import __version__
-from hmf import wdm, MassFunction
+from halomod import wdm, TracerHaloModel
 from tabination.views import TabView
 
 from . import forms
@@ -56,24 +56,24 @@ class CalculatorInputBase(FormView):
     """
 
     # Define the needed variables for FormView class
-    form_class = forms.HMFInput
+    form_class = forms.FrameworkInput
     success_url = "/halomod/"
     template_name = "calculator_form.html"
 
-    def cleaned_data_to_hmf_dict(self, form):
+    def cleaned_data_to_framework_dict(self, form):
         # get all the _params out
-        hmf_dict = {}
+        frmwrk_dict = {}
         for k, v in form.cleaned_data.items():
-            # label is not a MassFunction argument
+            # label is not a halo model argument
             if k == "label":
                 continue
             elif k == "lnk_range":
-                hmf_dict["lnk_min"] = v[0]
-                hmf_dict["lnk_max"] = v[1]
+                frmwrk_dict["lnk_min"] = v[0]
+                frmwrk_dict["lnk_max"] = v[1]
                 continue
             elif k == "logm_range":
-                hmf_dict["Mmin"] = v[0]
-                hmf_dict["Mmax"] = v[1]
+                frmwrk_dict["Mmin"] = v[0]
+                frmwrk_dict["Mmax"] = v[1]
                 continue
 
             component = getattr(form.fields[k], "component", None)
@@ -90,36 +90,36 @@ class CalculatorInputBase(FormView):
                 dctkey = component + "_params"
                 paramname = form.fields[k].paramname
 
-                if dctkey not in hmf_dict:
-                    hmf_dict[dctkey] = {paramname: v}
+                if dctkey not in frmwrk_dict:
+                    frmwrk_dict[dctkey] = {paramname: v}
                 else:
-                    hmf_dict[dctkey][paramname] = v
+                    frmwrk_dict[dctkey][paramname] = v
             else:
-                hmf_dict[k] = v
+                frmwrk_dict[k] = v
 
-        if hmf_dict["wdm_mass"] > 0:
-            cls = wdm.MassFunctionWDM
+        if frmwrk_dict["wdm_mass"] > 0:
+            cls = wdm.HaloModelWDM
         else:
             # Remove all WDM stuff
             # TODO: probably a better way about this.
-            cls = MassFunction
-            del hmf_dict["wdm_mass"]
-            del hmf_dict["wdm_model"]
-            del hmf_dict["wdm_params"]
-            del hmf_dict["alter_model"]
+            cls = TracerHaloModel
+            del frmwrk_dict["wdm_mass"]
+            del frmwrk_dict["wdm_model"]
+            del frmwrk_dict["wdm_params"]
+            del frmwrk_dict["alter_model"]
 
             # have to check because it won't be there if alter_model is None
-            if "alter_params" in hmf_dict:
-                del hmf_dict["alter_params"]
+            if "alter_params" in frmwrk_dict:
+                del frmwrk_dict["alter_params"]
 
-        return cls, hmf_dict
+        return cls, frmwrk_dict
 
     # Define what to do if the form is valid.
     def form_valid(self, form):
 
         label = form.cleaned_data["label"]
 
-        cls, hmf_dict = self.cleaned_data_to_hmf_dict(form)
+        cls, hmf_dict = self.cleaned_data_to_framework_dict(form)
         logger.info("Constructed hmf_dct: %s", hmf_dict)
 
         previous = self.kwargs.get("label", None)
@@ -211,9 +211,9 @@ def complete_reset(request):
 
 class ViewPlots(BaseTab):
     def get(self, request, *args, **kwargs):
-        # Create a default MassFunction object that displays upon opening.
+        # Create a default TracerHaloModel object that displays upon opening.
         if "objects" not in request.session:
-            default_obj = MassFunction()
+            default_obj = TracerHaloModel()
 
             request.session["objects"] = OrderedDict(default=default_obj)
             request.session["forms"] = OrderedDict()
