@@ -353,7 +353,7 @@ def header_txt(request):
 
     # Write the parameter info
     response.write("File Created On: " + str(datetime.datetime.now()) + "\n")
-    response.write("With version " + calc_version + " of HMFcalc \n")
+    response.write("With version " + calc_version + " of halomod_app \n")
     response.write("And version " + __version__ + " of hmf (backend) \n")
     response.write("\n")
     response.write("SETS OF PARAMETERS USED \n")

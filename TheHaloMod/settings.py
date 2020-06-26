@@ -31,7 +31,7 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 # ===============================================================================
 # THE PROJECT DIRECTORY
 # ===============================================================================
-# The directory above the one this very file is in (top-level HMFcalc)
+# The directory above the one this very file is in (top-level halomod_app)
 ROOT_DIR = os.path.split(os.path.dirname(__file__))[0]
 
 # ===============================================================================
@@ -66,7 +66,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "analytical",
     "crispy_forms",
-    "HMFcalc",
+    "halomod_app",
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -115,7 +115,7 @@ LOGGING = {
             "level": "INFO",
             "propagate": True,
         },
-        "HMFcalc": {"handlers": ["console_dev", "console_prod"], "level": "INFO"},
+        "halomod_app": {"handlers": ["console_dev", "console_prod"], "level": "INFO"},
     },
 }
 
@@ -220,10 +220,10 @@ MIDDLEWARE = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = "HMF.urls"
+ROOT_URLCONF = "TheHaloMod.urls"
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = "HMF.wsgi.application"
+WSGI_APPLICATION = "TheHaloMod.wsgi.application"
 SESSION_SAVE_EVERY_REQUEST = True
 
 # ===============================================================================
