@@ -1,3 +1,7 @@
+"""
+Defines custom meta-forms and other utilities to make forms easier.
+"""
+
 import logging
 import re
 from collections import OrderedDict
@@ -81,7 +85,6 @@ class RangeSlider(forms.TextInput):
         return mark_safe(s + html)
 
 
-# --------- Custom Form Field for Comma-Separated Input -----
 class FloatListField(forms.CharField):
     """
     Defines a form field that accepts comma-separated real values and returns a list of floats.
@@ -209,7 +212,9 @@ class CompositeForm(forms.Form):
             self._errors.update(form._errors)
 
 
-class HMFModelForm(forms.Form):
+class ComponentModelForm(forms.Form):
+    """Base class for forms that define input to Components."""
+
     label = None  # The text that shows on the form's tab
     kind = None  # What it's called in the hmf framework, eg "hmf" for "hmf_model"
     choices = None
@@ -323,7 +328,9 @@ class HMFModelForm(forms.Form):
         return param_div
 
 
-class HMFFramework(forms.Form):
+class FrameworkForm(forms.Form):
+    """Base class for forms that define inputs to Frameworks."""
+
     label = None
 
     def __init__(self, *args, **kwargs):

@@ -1,6 +1,6 @@
 {% extends "text_base.html" %}
 
-{% block title %}HMFcalc | Help {% endblock %}
+{% block title %}TheHaloMod | Help {% endblock %}
 {% block subheading %}
     <div class="col-9 page-header mx-auto">
         <h1>Help</h1>
@@ -10,28 +10,28 @@
 {% block content %}
     <div class="col-9 mx-auto">
         <p class="lead muted">
-            This page outlines the common usage of HMF<em>calc</em>, along with
+            This page outlines the common usage of TheHaloMod, along with
             information concerning the various parameters and options included.
             Much of this information is a modified rendition of
             <a href=http://arxiv.org/abs/1306.6721>this article</a>, which
-            accompanied the publishing of HMF<em>calc</em>, though the backend
+            accompanied the publishing of TheHaloMod, though the backend
             has changed significantly since this publication.
             Read on for information about common usage, the transfer function
             used, the cosmological parameters and the fitting functions.
         </p>
 
-        <h3>Using HMF<em>calc</em></h3>
+        <h3>Using TheHaloMod</h3>
         <p>
-            HMF<em>calc</em> is built to be easy to use. In the simplest example,
+            TheHaloMod is built to be easy to use. In the simplest example,
             the only action required on your part is to navigate to the
-            <a href="/hmfcalc/">calculator</a> and click "Calculate".
+            <a href="/halomod/">calculator</a> and click "Calculate".
             All required options and parameters are filled with
             sensible defaults and ready to go. Nevertheless, most users will
             want to fiddle with the parameters to tune them to their
             particular needs -- be it a survey, simulation or investigation.
         </p>
         <p>
-            The options and parameters in HMF<em>calc</em> were chosen to give
+            The options and parameters in TheHaloMod were chosen to give
             as much flexibility as possible without making things overly
             complicated. They are split over tabs in the calculator, each
             governing a different sub-model.
@@ -39,10 +39,10 @@
 
         <p>
             The organisation of these tabs is no accident -- it mirrors the
-            internal organisation of the <code>hmf</code> code.
-            <code>hmf</code> is composed of a series of <code>components</code>,
+            internal organisation of the <code>halomod</code> code.
+            <code>halomod</code> is composed of a series of <code>components</code>,
             integrated into <code>frameworks</code>. Each <code>component</code>
-            and <code>framework</code> receives its own Tab in HMF<em>calc</em>.
+            and <code>framework</code> receives its own Tab in TheHaloMod.
         </p>
         <p>
             In particular, <code>components</code> often have many different
@@ -55,7 +55,7 @@
 
         <h4>Model Creation and Editing</h4>
         <p>
-            New to HMF<em>calc</em> is the ability to view and edit the models
+            New to TheHaloMod is the ability to view and edit the models
             that have been thus-far created. Each created model receives its
             own entry in a table below the main plotting interface. From there,
             you can choose to edit or delete the model. Also, you can create a
@@ -64,15 +64,15 @@
             chosen as a starting point).
         </p>
         <p>
-            HMF<em>calc</em> starts with a default model (matching the default
-            model of <code>hmf</code>) and allows you to edit or create more
+            TheHaloMod starts with a default model (matching the default
+            model of <code>halomod</code>) and allows you to edit or create more
             models based on this default. You can delete all but one model,
-            as HMF<em>calc</em> always expects to have at least one model
+            as TheHaloMod always expects to have at least one model
             defined.
         </p>
         <p>
             Models are persistent -- you can navigate to this help page and
-            back to the <a href="/hmfcalc/">calculator</a> and your models
+            back to the <a href="/halomod/">calculator</a> and your models
             will remain. To restart calculations from the original default
             model and delete all the models you've created in the session,
             use the big red restart button in the calculator.

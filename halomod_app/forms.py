@@ -1,8 +1,4 @@
-"""
-Created on May 3, 2012
-
-@author: smurray
-"""
+"""All the forms on TheHaloMod"""
 
 import logging
 
@@ -15,12 +11,17 @@ from django import forms
 from django.utils.safestring import mark_safe
 from hmf import growth_factor, transfer_models, fitting_functions, filters, wdm
 from hmf.halos import mass_definitions
-from .form_utils import CompositeForm, HMFModelForm, HMFFramework, RangeSliderField
+from .form_utils import (
+    CompositeForm,
+    ComponentModelForm,
+    FrameworkForm,
+    RangeSliderField,
+)
 
 logger = logging.getLogger(__name__)
 
 
-class CosmoForm(HMFModelForm):
+class CosmoForm(ComponentModelForm):
     choices = [
         ("Planck15", "Planck15"),
         ("Planck13", "Planck13"),
@@ -55,7 +56,7 @@ class CosmoForm(HMFModelForm):
     )
 
 
-class GrowthForm(HMFModelForm):
+class GrowthForm(ComponentModelForm):
     choices = [
         ("GrowthFactor", "Integral"),
         ("GenMFGrowth", "GenMF"),
@@ -66,7 +67,7 @@ class GrowthForm(HMFModelForm):
     module = growth_factor
 
 
-class TransferForm(HMFModelForm):
+class TransferForm(ComponentModelForm):
     choices = [
         ("CAMB", "CAMB"),
         ("EH_BAO", "Eisenstein-Hu (1998) (with BAO)"),
@@ -92,7 +93,7 @@ class TransferForm(HMFModelForm):
         return thefile
 
 
-class TransferFramework(HMFFramework):
+class TransferFramework(FrameworkForm):
     label = "Transfer Function"
 
     # Redshift at which to calculate the mass variance.
@@ -132,7 +133,7 @@ class TransferFramework(HMFFramework):
     )
 
 
-class HMFForm(HMFModelForm):
+class HMFForm(ComponentModelForm):
     choices = [
         ("PS", "Press-Schechter (1974)"),
         ("SMT", "Sheth-Mo-Tormen (2001)"),
@@ -159,7 +160,7 @@ class HMFForm(HMFModelForm):
     module = fitting_functions
 
 
-class FilterForm(HMFModelForm):
+class FilterForm(ComponentModelForm):
     module = filters
     choices = [
         ("TopHat", "Top-hat"),
@@ -170,7 +171,7 @@ class FilterForm(HMFModelForm):
     _initial = "TopHat"
 
 
-class MassFunctionFramework(HMFFramework):
+class MassFunctionFramework(FrameworkForm):
     label = "Mass Function"
 
     logm_range = RangeSliderField(
@@ -186,7 +187,7 @@ class MassFunctionFramework(HMFFramework):
     )
 
 
-class MassDefinitionForm(HMFModelForm):
+class MassDefinitionForm(ComponentModelForm):
     module = mass_definitions
     _initial = "None"
     choices = [
@@ -199,7 +200,7 @@ class MassDefinitionForm(HMFModelForm):
     kind = "mdef"
 
 
-class WDMAlterForm(HMFModelForm):
+class WDMAlterForm(ComponentModelForm):
     module = wdm
     _initial = "None"
     choices = [
@@ -216,13 +217,13 @@ class WDMAlterForm(HMFModelForm):
             self.cleaned_data["alter_model"] = None
 
 
-class WDMForm(HMFModelForm):
+class WDMForm(ComponentModelForm):
     module = wdm
     _initial = "Viel05"
     choices = [("Viel05", "Viel (2005)")]
 
 
-class WDMFramework(HMFFramework):
+class WDMFramework(FrameworkForm):
     wdm_mass = forms.FloatField(
         label="WDM Particle Mass (keV)", initial=0, min_value=0, max_value=1000.0
     )
