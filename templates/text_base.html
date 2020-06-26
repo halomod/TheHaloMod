@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block allcontent %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {% block subheading %}{% endblock %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

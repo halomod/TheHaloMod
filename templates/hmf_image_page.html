@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}HMFcalc | Plots {% endblock %}
+
+{% block allcontent %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-7">
+                {% crispy form %}
+            </div>
+            <div class="col-5">
+                <a class="btn btn-success btn-large" href="create/">
+                    <i class="fas fa-plus-square"></i> New Model</a>
+                <a class="btn btn-danger btn-large" href="restart/">
+                    <i class="fas fa-redo-alt"></i> Restart</a>
+            </div>
+
+        </div>
+
+        {% if warnings %}
+            <div id='warnings' class='row'>
+                <div class='col'>
+
+                    <ul>
+                        {% for warning in warnings %}
+                            <li class="text-warning"> {{ warning }} </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row" id="image_row">
+            <div class='col-md-12 mx-auto'>
+                <img src="dndm.svg" id='the_image' width="100%">
+            </div>
+        </div>
+
+
+        <!-- Model Table -->
+        <div class="row" id="model_table_row">
+            <div class="col-8">
+                <table class="table" id="model_table">
+                    <tbody>
+                    {% for object in objects.keys %}
+                        <tr id="{{ object }}-table-row">
+                            <th scope="row"> {{ object }}</th>
+                            <td id="{{ object }}-table-edit">
+                                <a href="edit/{{ object }}/">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            </td>
+                            <td id="{{ object }}-table-delete">
+                                <a href="delete/{{ object }}" id="{{ object }}-table-delete-button">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </td>
+                            <td id="{{ object }}-table-create">
+                                <a href="create/{{ object }}/">
+                                    <i class="far fa-plus-square"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
