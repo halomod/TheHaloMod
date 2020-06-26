@@ -7,7 +7,7 @@ from django.urls import include, path
 # admin.autodiscover()
 
 urlpatterns = [
-    path("", include("HMFcalc.urls")),
+    path("", include("halomod_app.urls")),
 ]
 
 if settings.DEBUG:

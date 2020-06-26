@@ -1,5 +1,5 @@
 """
-WSGI config for HMF project.
+WSGI config for TheHaloMod project.
 
 This module contains the WSGI application used by Django's development server
 and any production WSGI deployments. It should expose a module-level variable
@@ -20,7 +20,7 @@ import sys
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _PROJECT_DIR)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HMF.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "TheHaloMod.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

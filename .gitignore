@@ -2,6 +2,6 @@
 *~
 .pydevproject
 .project
-HMFcalc/secret_settings.py
+TheHaloMod/secret_settings.py
 *.DS_Store
 \.idea/

@@ -10,7 +10,7 @@ from fabric.contrib.console import confirm
 username = "hmf"
 home_dir = "/home/" + username + "/"
 env.hosts = [username + "@icrar-nix-023.icrar.org"]
-app_name = "HMFcalc"
+app_name = "halomod_app"
 code_dir = home_dir + app_name + "/"
 
 
@@ -45,12 +45,12 @@ def deploy():
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/steven-murray/HMFcalc.git %s" % code_dir)
 
-    put("HMF/secret_settings.py", code_dir + "HMF/")
+    put("TheHaloMod/secret_settings.py", code_dir + "TheHaloMod/")
     with cd(code_dir):
         run("git fetch --all")
         run("git reset --hard origin/master")
         run("%shmfenv/bin/python change_prod_settings.py" % (home_dir))
-        run("touch HMF/wsgi.py")
+        run("touch TheHaloMod/wsgi.py")
 
     # Update hmf from git repo
     with cd(home_dir + "hmf"):
