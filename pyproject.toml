@@ -9,13 +9,16 @@ license = "MIT"
 python = "^3.8"
 django = "^3.0.7"
 matplotlib = "^3.2.2"
-hmf = "^3.1.0"
-halomod = "^1.4.6-alpha.58"
+hmf = { path = "../../HMF/hmf" }
+halomod = { path = "../halomod" }
 sentry_sdk = "^0.15.1"
 django-analytical = "^2.6.0"
 django-crispy-forms = "^1.9.1"
 django-tabination = "^0.4.0"
 django-range-slider = "^0.2.4"
+numba = "^0.50.1"
+setuptools_scm = "^4.1.2"
+setuptools = "^47.3.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.5.1"

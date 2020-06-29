@@ -213,7 +213,7 @@ class ViewPlots(BaseTab):
     def get(self, request, *args, **kwargs):
         # Create a default TracerHaloModel object that displays upon opening.
         if "objects" not in request.session:
-            default_obj = TracerHaloModel()
+            default_obj = TracerHaloModel(hod_params={"central": True})
 
             request.session["objects"] = OrderedDict(default=default_obj)
             request.session["forms"] = OrderedDict()
@@ -242,85 +242,28 @@ def plots(request, filetype, plottype):
     """
     objects = request.session.get("objects", None)
 
-    if not objects:
-        return HttpResponseRedirect("/halomod/")
-
-    if filetype not in ["png", "svg", "pdf", "zip"]:
-        raise ValueError("{} is not a valid plot filetype".format(filetype))
-
-    MLABEL = r"Mass $(M_{\odot}h^{-1})$"
-    KLABEL = r"Wavenumber, $k$ [$h$/Mpc]"
-
     keymap = {
-        "dndm": {
-            "xlab": MLABEL,
-            "ylab": r"Mass Function $\left( \frac{dn}{dM} \right) h^4 Mpc^{-3}M_\odot^{-1}$",
-            "yscale": "log",
-        },
-        "dndlnm": {
-            "xlab": MLABEL,
-            "ylab": r"Mass Function $\left( \frac{dn}{d\ln M} \right) h^3 Mpc^{-3}$",
-            "yscale": "log",
-        },
-        "dndlog10m": {
-            "xlab": MLABEL,
-            "ylab": r"Mass Function $\left( \frac{dn}{d\log_{10}M} \right) h^3 Mpc^{-3}$",
-            "yscale": "log",
-        },
-        "fsigma": {
-            "xlab": MLABEL,
-            "ylab": r"$f(\sigma) = \nu f(\nu)$",
-            "yscale": "linear",
-        },
-        "ngtm": {"xlab": MLABEL, "ylab": r"$n(>M) h^3 Mpc^{-3}$", "yscale": "log"},
-        "rho_gtm": {
-            "xlab": MLABEL,
-            "ylab": r"$\rho(>M)$, $M_{\odot}h^{2}Mpc^{-3}$",
-            "yscale": "log",
-        },
-        "rho_ltm": {
-            "xlab": MLABEL,
-            "ylab": r"$\rho(<M)$, $M_{\odot}h^{2}Mpc^{-3}$",
-            "yscale": "linear",
-        },
-        "how_big": {
-            "xlab": MLABEL,
-            "ylab": r"Box Size, $L$ Mpc$h^{-1}$",
-            "yscale": "log",
-        },
-        "sigma": {
-            "xlab": MLABEL,
-            "ylab": r"Mass Variance, $\sigma$",
-            "yscale": "linear",
-        },
-        "lnsigma": {"xlab": MLABEL, "ylab": r"$\ln(\sigma^{-1})$", "yscale": "linear"},
-        "n_eff": {
-            "xlab": MLABEL,
-            "ylab": r"Effective Spectral Index, $n_{eff}$",
-            "yscale": "linear",
-        },
-        "power": {"xlab": KLABEL, "ylab": r"$P(k)$, [Mpc$^3 h^{-3}$]", "yscale": "log"},
-        "transfer_function": {
-            "xlab": KLABEL,
-            "ylab": r"$T(k)$, [Mpc$^3 h^{-3}$]",
-            "yscale": "log",
-        },
-        "delta_k": {"xlab": KLABEL, "ylab": r"$\Delta(k)$", "yscale": "log"},
+        **utils.KEYMAP,
         "comparison_dndm": {
-            "xlab": MLABEL,
+            "xlab": utils.MLABEL,
             "ylab": r"Ratio of Mass Functions $ \left(\frac{dn}{dM}\right) / \left( \frac{dn}{dM} \right)_{%s} $"
             % list(objects.keys())[0],
             "yscale": "log",
             "basey": 2,
         },
         "comparison_fsigma": {
-            "xlab": MLABEL,
+            "xlab": utils.MLABEL,
             "ylab": r"Ratio of Fitting Functions $f(\sigma)/ f(\sigma)_{%s}$"
             % list(objects.keys())[0],
             "yscale": "log",
             "basey": 2,
         },
     }
+    if not objects:
+        return HttpResponseRedirect("/halomod/")
+
+    if filetype not in ["png", "svg", "pdf", "zip"]:
+        raise ValueError(f"{filetype} is not a valid plot filetype")
 
     figure_buf = utils.create_canvas(
         objects, plottype, keymap[plottype], plot_format=filetype
@@ -383,56 +326,31 @@ def data_output(request):
     buff = io.BytesIO()
     archive = zipfile.ZipFile(buff, "w", zipfile.ZIP_DEFLATED)
 
-    # Write out mass-based and k-based data files
+    # Write out mass-based, k-based and r-based data files
     for i, o in enumerate(objects):
-        s = io.BytesIO()
+        for kind in utils.XLABELS:
 
-        # MASS BASED
-        s.write(b"# [1] m:            [M_sun/h] \n")
-        s.write(b"# [2] sigma \n")
-        s.write(b"# [3] ln(1/sigma) \n")
-        s.write(b"# [4] n_eff \n")
-        s.write(b"# [5] f(sigma) \n")
-        s.write(b"# [6] dn/dm:        [h^4/(Mpc^3*M_sun)] \n")
-        s.write(b"# [7] dn/dlnm:      [h^3/Mpc^3] \n")
-        s.write(b"# [8] dn/dlog10m:   [h^3/Mpc^3] \n")
-        s.write(b"# [9] n(>m):        [h^3/Mpc^3] \n")
-        s.write(b"# [10] rho(>m):     [M_sun*h^2/Mpc^3] \n")
-        s.write(b"# [11] rho(<m):     [M_sun*h^2/Mpc^3] \n")
-        s.write(b"# [12] Lbox(N=1):   [Mpc/h]\n")
+            s = io.BytesIO()
 
-        out = np.array(
-            [
-                o.m,
-                o.sigma,
-                o.lnsigma,
-                o.n_eff,
-                o.fsigma,
-                o.dndm,
-                o.dndlnm,
-                o.dndlog10m,
-                o.ngtm,
-                o.rho_gtm,
-                o.rho_ltm,
-                o.how_big,
-            ]
-        ).T
-        np.savetxt(s, out)
+            s.write(f"# [0] {utils.XLABELS[kind]}")
 
-        archive.writestr("mVector_{}.txt".format(labels[i]), s.getvalue())
+            items = {
+                k: utils.KEYMAP[k]["ylab"]
+                for k in utils.KEYMAP
+                if utils.KEYMAP[k]["xlab"] == utils.XLABELS[kind]
+            }
 
-        s.close()
-        s = io.BytesIO()
+            for i, (label, ylab) in enumerate(items.items()):
+                s.write(f"# [{i+1}] {ylab}")
 
-        # K BASED
-        s.write(b"# [1] k:    [h/Mpc] \n")
-        s.write(b"# [2] P:    [Mpc^3/h^3] \n")
-        s.write(b"# [3] T:     \n")
-        s.write(b"# [4] Delta_k \n")
+            out = np.array(
+                [getattr(o, kind)] + [getattr(o, label) for label in items]
+            ).T
+            np.savetxt(s, out)
 
-        out = np.exp(np.array([o.k, o.power, o.transfer_function, o.delta_k]).T)
-        np.savetxt(s, out)
-        archive.writestr("kVector_{}.txt".format(labels[i]), s.getvalue())
+            archive.writestr(f"{kind}Vector_{labels[i]}.txt", s.getvalue())
+
+            s.close()
 
     archive.close()
     buff.flush()

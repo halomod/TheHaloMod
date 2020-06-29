@@ -370,6 +370,58 @@ class PlotChoice(forms.Form):
             ("transfer_function", "Transfer Function"),
             ("power", "Power Spectrum"),
             ("delta_k", "Dimensionless Power Spectrum"),
+            # Halo Model
+            ("halo_bias", "Halo Bias"),
+            ("cmz_relation", "Halo Concentration-Mass Relation"),
+            ("corr_2h_auto_tracer", "2-halo tracer-tracer correlation function"),
+            ("corr_auto_tracer", "Tracer-tracer correlation function"),
+            ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
+            ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
+            ("corr_linear_mm", "Linear matter correlation function"),
+            ("total_occupation", "Tracer occupation"),
+            ("corr_1h_auto_tracer", "1-halo tracer-tracer correlation function"),
+            ("sd_bias_correction", "Scale-dependent bias correction"),
+            ("central_occupation", "Occupation of central component"),
+            ("satellite_occupation", "Occupation of satellite component"),
+            ("corr_1h_auto_matter", "1-halo matter-matter correlation function"),
+            (
+                "corr_1h_cross_tracer_matter",
+                "1-halo matter-tracer correlation function",
+            ),
+            (
+                "corr_1h_cs_auto_tracer",
+                "1-halo central-satellite tracer correlation function",
+            ),
+            (
+                "corr_1h_ss_auto_tracer",
+                "1-halo satellite-satellite tracer correlation function",
+            ),
+            ("corr_2h_auto_matter", "2-halo matter-matter correlation function"),
+            (
+                "corr_2h_cross_tracer_matter",
+                "2-halo matter-tracer correlation function",
+            ),
+            ("corr_auto_matter", "Matter-matter correlation function"),
+            ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
+            # ("halo_profile_rho", )
+            ("nonlinear_delta_k", "Non-linear dimensionless power spectrum (HALOFIT)"),
+            ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
+            ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+            ("power_1h_cross_tracer_matter", "1-halo tracer-matter power spectrum"),
+            (
+                "power_1h_cs_auto_tracer",
+                "1-halo central-satellite tracer power spectrum",
+            ),
+            (
+                "power_1h_ss_auto_tracer",
+                "1-halo satellite-satellite tracer power spectrum",
+            ),
+            ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+            ("power_2h_cross_tracer_matter", "2-halo matter-tracer power spectrum"),
+            ("power_auto_tracer", "Tracer power spectrum"),
+            ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
+            ("radii", "Radii of spherical regions"),
+            ("tracer_concentration", "Tracer conentration-mass relation"),
         ]
 
         if len(objects) > 1:
@@ -392,7 +444,10 @@ class PlotChoice(forms.Form):
                 ]
 
         self.fields["plot_choice"] = forms.ChoiceField(
-            label="Plot: ", choices=plot_choices, initial="dndm", required=False
+            label="Plot: ",
+            choices=plot_choices,
+            initial="power_auto_tracer",
+            required=False,
         )
 
         self.helper = FormHelper()
@@ -416,7 +471,9 @@ class PlotChoice(forms.Form):
     ]
 
     download_choice = forms.ChoiceField(
-        label=mark_safe('<a href="dndm.pdf" id="plot_download">Download </a>'),
+        label=mark_safe(
+            '<a href="power_auto_tracer.pdf" id="plot_download">Download </a>'
+        ),
         choices=download_choices,
         initial="pdf-current",
         required=False,
