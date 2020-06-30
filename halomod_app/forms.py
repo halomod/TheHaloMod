@@ -17,8 +17,18 @@ from .form_utils import (
     FrameworkForm,
     RangeSliderField,
 )
+from halomod import bias
+from halomod import concentration
+from halomod import profiles
+from halomod import halo_exclusion
+from halomod import hod
+from halomod import wdm as hm_wdm
+from halomod import TracerHaloModel
 
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_MODEL = TracerHaloModel.get_all_parameter_defaults()
 
 
 class CosmoForm(ComponentModelForm):
@@ -63,7 +73,6 @@ class GrowthForm(ComponentModelForm):
         ("Carroll1992", "Carroll (1992)"),
         # ("CAMB", "CambGrowth")
     ]
-    _initial = "GrowthFactor"
     module = growth_factor
 
 
@@ -75,7 +84,6 @@ class TransferForm(ComponentModelForm):
         ("BBKS", "BBKS (1986)",),
         ("BondEfs", "Bond-Efstathiou"),
     ]
-    _initial = "CAMB"
     module = transfer_models
     ignore_fields = ["camb_params"]
 
@@ -97,12 +105,14 @@ class TransferFramework(FrameworkForm):
     label = "Transfer Function"
 
     # Redshift at which to calculate the mass variance.
-    z = forms.FloatField(label="Redshift", initial="0", min_value=0, max_value=1100)
+    z = forms.FloatField(
+        label="Redshift", initial=str(DEFAULT_MODEL["z"]), min_value=0, max_value=1100
+    )
 
     # Power spectral index
     n = forms.FloatField(
         label=mark_safe("n<sub>s</sub> "),
-        initial="0.965",
+        initial=f"{DEFAULT_MODEL['n']}",
         min_value=-4,
         max_value=3,
         help_text="Spectral Index (note: modified by Base Cosmology)",
@@ -111,7 +121,7 @@ class TransferFramework(FrameworkForm):
     # Mass variance on a scale of 8Mpc
     sigma_8 = forms.FloatField(
         label=mark_safe("&#963<sub>8</sub>"),
-        initial="0.802",
+        initial=f"{DEFAULT_MODEL['sigma_8']}",
         min_value=0.1,
         help_text="RMS Mass Fluctuations (note: modified by Base Cosmology)",
     )
@@ -120,7 +130,7 @@ class TransferFramework(FrameworkForm):
         label="lnk range",
         minimum=np.log(1e-10),
         maximum=np.log(2e6),
-        initial="-18.42 - 9.9",
+        initial=f"{DEFAULT_MODEL['lnk_min']} - {DEFAULT_MODEL['lnk_max']}",
         step=0.1,
     )
 
@@ -156,7 +166,6 @@ class HMFForm(ComponentModelForm):
         ("Manera", "Manera (2010)"),
         ("Ishiyama", "Ishiyama (2015)"),
     ]
-    _initial = "Tinker08"
     module = fitting_functions
 
 
@@ -168,28 +177,38 @@ class FilterForm(ComponentModelForm):
         ("SharpK", "Sharp-k"),
         ("SharpKEllipsoid", "Sharp-k with ellipsoidal correction"),
     ]
-    _initial = "TopHat"
 
 
 class MassFunctionFramework(FrameworkForm):
     label = "Mass Function"
 
+    # Setting the initial here just has to correspond to the default TracerHaloModel.
+    # If the value is updated, it will get automatically reflected in its descendent models.
     logm_range = RangeSliderField(
-        label="Mass Range (log10)", minimum=0, maximum=20, initial="10 - 15", step=0.1
+        label="Mass Range (log10)",
+        minimum=0,
+        maximum=20,
+        initial=f"{DEFAULT_MODEL['Mmin']} - {DEFAULT_MODEL['Mmax']}",
+        step=0.1,
     )
 
     dlog10m = forms.FloatField(
-        label="Mass Resolution (log10)", min_value=0.005, max_value=1, initial="0.01"
+        label="Mass Resolution (log10)",
+        min_value=0.005,
+        max_value=1,
+        initial=f"{DEFAULT_MODEL['dlog10m']}",
     )
 
     delta_c = forms.FloatField(
-        label=mark_safe("&#948<sub>c</sub>"), initial="1.686", min_value=1, max_value=3
+        label=mark_safe("&#948<sub>c</sub>"),
+        initial=f"{DEFAULT_MODEL['delta_c']}",
+        min_value=1,
+        max_value=3,
     )
 
 
 class MassDefinitionForm(ComponentModelForm):
     module = mass_definitions
-    _initial = "None"
     choices = [
         ("None", "Use native definition of mass function"),
         ("SOMean", "Spherical Overdensity wrt mean"),
@@ -202,7 +221,6 @@ class MassDefinitionForm(ComponentModelForm):
 
 class WDMAlterForm(ComponentModelForm):
     module = wdm
-    _initial = "None"
     choices = [
         ("None", "No recalibration"),
         ("Schneider12_vCDM", "Schneider (2012) recalibration of CDM"),
@@ -219,7 +237,6 @@ class WDMAlterForm(ComponentModelForm):
 
 class WDMForm(ComponentModelForm):
     module = wdm
-    _initial = "Viel05"
     choices = [("Viel05", "Viel (2005)")]
 
 
@@ -229,10 +246,39 @@ class WDMFramework(FrameworkForm):
     )
 
 
+class BiasForm(ComponentModelForm):
+    module = bias
+    choices = [
+        ("Tinker10", "Tinker (2010)"),
+        ("UnityBias", "Unbiased"),
+        ("Mo96", "Mo (1996)"),
+        ("Jing98", "Jing (1998)"),
+        ("ST99", "Sheth-Tormen (1999)"),
+        ("SMT01", "Sheth-Mo-Tormen (2001)"),
+        ("Seljak04", "Seljak (2004) Without Cosmo"),
+        ("Seljak04Cosmo", "Seljak (2004) With Cosmo"),
+        ("Mandelbaum05", "Mandelbaum (2005)"),
+        ("Pillepich10", "Pillepich (2010)"),
+        ("Manera10", "Manera (2010)"),
+        ("Tinker10PBSplit", "Tinker (2010) Peak-Background Split"),
+    ]
+    field_kwargs = {"Jing98_use_nu": {"label": r"Use $\nu$?"}}
+
+
+class ConcentrationForm(ComponentModelForm):
+    module = concentration
+    choices = [
+        ("Bullock01", "Bullock (2001) Physical Form"),
+        ("Bullock01Power", "Bullock (2001) Power-Law"),
+        ("Duffy08", "Duffy (2008) Power-Law"),
+        ("Zehavi11", "Zehavi (2011) Power-Law"),
+        ("Ludlow16", "Ludlow (2016)"),
+        ("Ludlow16Empirical", "Ludlow (2016) Empirical"),
+    ]
+
+
 class FrameworkInput(CompositeForm):
-    """
-    Input parameters to the overall framework
-    """
+    """Input parameters to the overall framework."""
 
     form_list = [
         MassFunctionFramework,
@@ -246,6 +292,8 @@ class FrameworkInput(CompositeForm):
         WDMFramework,
         WDMForm,
         WDMAlterForm,
+        BiasForm,
+        ConcentrationForm,
     ]
 
     label = forms.CharField(

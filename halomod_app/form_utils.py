@@ -11,7 +11,12 @@ from crispy_forms.layout import Div, Field
 from django import forms
 from django.utils.safestring import mark_safe
 
+from halomod import TracerHaloModel
+
 logger = logging.getLogger(__name__)
+
+
+DEFAULTS = TracerHaloModel.get_all_parameter_defaults()
 
 
 class RangeSlider(forms.TextInput):
@@ -236,6 +241,16 @@ class ComponentModelForm(forms.Form):
         if self.kind is None:
             self.kind = self.__class__.__name__.split("Form")[0].lower()
 
+        # Get initial model choice based on defaults of TracerHaloModel.
+        if self._initial is None:
+            df = DEFAULTS.get(self.kind + "_model")
+            if isinstance(df, str):
+                self._initial = df
+            elif df is None:
+                self._initial = "None"
+            else:
+                self._initial = df.__name__
+
         # Fill the fields
         if not self.multi:
             self.fields[f"{self.kind}_model"] = forms.ChoiceField(
@@ -297,8 +312,13 @@ class ComponentModelForm(forms.Form):
                 # don't allow dictionaries for now
                 continue
 
+            field_types = {
+                float: forms.FloatField,
+                bool: forms.BooleanField,
+            }
+
             fkw = self.field_kwargs.get(key, {})
-            thisfield = fkw.pop("type", forms.FloatField)
+            thisfield = fkw.pop("type", field_types.get(type(val), forms.FloatField))
 
             self.fields[name] = thisfield(
                 label=fkw.pop("label", key), initial=str(val), required=False, **fkw

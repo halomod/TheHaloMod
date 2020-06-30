@@ -60,7 +60,6 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         if not compare:
             y = getattr(o, q)
             if y is not None:
-                print(q, y)
                 ax.plot(
                     getattr(o, x),
                     y,

@@ -151,7 +151,6 @@ class CalculatorInputCreate(CalculatorInputBase):
         kwargs.update(
             current_models=self.request.session.get("objects", None),
             model_label=prev_label,
-            #            previous_form=forms.get(prev_label, None) if prev_label else None,
             initial=forms.get(prev_label, None) if prev_label else None,
         )
         return kwargs

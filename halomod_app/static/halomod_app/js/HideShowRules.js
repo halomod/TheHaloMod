@@ -5,7 +5,7 @@ $(function () {
             // the shown parameters when "SMT" is selected to a,p,A.
             var these = $('div[data-component=' + $(this).attr("data-component") + '][data-model~=' + $(this).val() + ']');
             these.show();
-            these.find("input").prop("required", true);
+            these.find("input.numberinput").prop("required", true);
 
             var those = $('div[data-component=' + $(this).attr("data-component") + ']').not('[data-model~=' + $(this).val() + ']');
             those.hide();
@@ -126,7 +126,7 @@ $(function () {
         $('#the_image').attr('src', src);
 
         //Also change download link
-        if ($('#id_download_choice').val() == 'pdf-current') {
+        if ($('#id_download_choice').val() === 'pdf-current') {
             var newlink = 'download/' + $('#id_plot_choice').val() + '.pdf';
             $('a#plot_download').attr('href', newlink);
         }
@@ -134,19 +134,19 @@ $(function () {
 
     //Change download link depending on what user wants to download
     $('#id_download_choice').change(function () {
-        if ($(this).val() == 'pdf-current') {
+        if ($(this).val() === 'pdf-current') {
             var newlink = $('#id_plot_choice').val() + '.pdf'
             $('a#plot_download').attr('href', newlink);
         }
-        if ($(this).val() == 'ASCII') {
+        if ($(this).val() === 'ASCII') {
             var newlink = "download/allData.zip"
             $('a#plot_download').attr('href', newlink);
         }
-        if ($(this).val() == 'parameters') {
+        if ($(this).val() === 'parameters') {
             var newlink = "download/parameters.txt"
             $('a#plot_download').attr('href', newlink);
         }
-        if ($(this).val() == 'halogen') {
+        if ($(this).val() === 'halogen') {
             var newlink = "download/halogen.zip"
             $('a#plot_download').attr('href', newlink);
         }
