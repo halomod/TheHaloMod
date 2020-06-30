@@ -262,10 +262,10 @@ class BiasForm(ComponentModelForm):
         ("Manera10", "Manera (2010)"),
         ("Tinker10PBSplit", "Tinker (2010) Peak-Background Split"),
     ]
-    field_kwargs = {"Jing98_use_nu": {"label": r"Use $\nu$?"}}
+    field_kwargs = {"use_nu": {"label": r"Use $\nu$?"}}
 
 
-class ConcentrationForm(ComponentModelForm):
+class HaloConcentrationForm(ComponentModelForm):
     module = concentration
     choices = [
         ("Bullock01", "Bullock (2001) Physical Form"),
@@ -275,6 +275,9 @@ class ConcentrationForm(ComponentModelForm):
         ("Ludlow16", "Ludlow (2016)"),
         ("Ludlow16Empirical", "Ludlow (2016) Empirical"),
     ]
+
+    field_kwargs = {"sample": {"choices": [("relaxed", "relaxed"), ("full", "full")]}}
+    kind = "halo_concentration"
 
 
 class FrameworkInput(CompositeForm):
@@ -293,7 +296,7 @@ class FrameworkInput(CompositeForm):
         WDMForm,
         WDMAlterForm,
         BiasForm,
-        ConcentrationForm,
+        HaloConcentrationForm,
     ]
 
     label = forms.CharField(

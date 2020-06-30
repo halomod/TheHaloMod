@@ -113,24 +113,14 @@ class FloatListField(forms.CharField):
                 except ValueError:
                     raise forms.ValidationError("%s is not a float" % number)
             for number in final_list:
-                if self.min_val is not None:
-                    if number < self.min_val:
-                        raise forms.ValidationError(
-                            "Must be greater than "
-                            + str(self.min_val)
-                            + " ("
-                            + str(number)
-                            + ")"
-                        )
-                if self.max_val is not None:
-                    if number > self.max_val:
-                        raise forms.ValidationError(
-                            "Must be smaller than "
-                            + str(self.max_val)
-                            + " ("
-                            + str(number)
-                            + ")"
-                        )
+                if self.min_val is not None and number < self.min_val:
+                    raise forms.ValidationError(
+                        f"Must be greater than {self.min_val} ({number})"
+                    )
+                if self.max_val is not None and number > self.max_val:
+                    raise forms.ValidationError(
+                        f"Must be smaller than {self.max_val} ({number})"
+                    )
 
         return final_list
 
@@ -304,17 +294,18 @@ class ComponentModelForm(forms.Form):
         for key, val in getattr(cls, "_defaults", {}).items():
             name = f"{self.kind}_{model}_{key}"
 
-            if key in self.ignore_fields:
-                continue
-            if model + "_" + key in self.ignore_fields:
-                continue
-            if isinstance(val, dict):
-                # don't allow dictionaries for now
+            if (
+                key in self.ignore_fields
+                or model + "_" + key in self.ignore_fields
+                or isinstance(val, dict)
+                or val is None
+            ):
                 continue
 
             field_types = {
                 float: forms.FloatField,
                 bool: forms.BooleanField,
+                str: forms.ChoiceField,
             }
 
             fkw = self.field_kwargs.get(key, {})
