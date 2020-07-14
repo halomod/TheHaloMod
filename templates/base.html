@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load analytical %}
 {% load hmf_version %}
+{% load halomod_version %}
 {% load static %}
 
 <html class="h-100" lang="en">
@@ -86,10 +87,15 @@
                 </ul>
                 <span class="navbar-text">
                     <a href="https://github.com/steven-murray/hmf">
-                        hmf v{% current_version %} &nbsp;
+                        hmf v{% current_hmf_version %} &nbsp;
                         <i class="fab fa-github"></i>
                     </a>
-                    &nbsp; | &nbsp;
+                    &nbsp; |
+                    <a href="https://github.com/steven-murray/halomod">
+                        halomod v{% current_halomod_version %} &nbsp;
+                        <i class="fab fa-github"></i>
+                    </a>&nbsp;
+                      |
                     <a href="/emailme/">
                         <i class="fas fa-envelope"></i>
                     </a>

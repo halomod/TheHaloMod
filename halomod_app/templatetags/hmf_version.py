@@ -10,8 +10,8 @@ from django import template
 register = template.Library()
 
 
-def current_version():
+def current_hmf_version():
     return hmf.__version__
 
 
-register.simple_tag(current_version)
+register.simple_tag(current_hmf_version)
