@@ -17,8 +17,18 @@ from .form_utils import (
     FrameworkForm,
     RangeSliderField,
 )
+from halomod import bias
+from halomod import concentration
+from halomod import profiles
+from halomod import halo_exclusion
+from halomod import hod
+from halomod import wdm as hm_wdm
+from halomod import TracerHaloModel
 
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_MODEL = TracerHaloModel.get_all_parameter_defaults()
 
 
 class CosmoForm(ComponentModelForm):
@@ -63,7 +73,6 @@ class GrowthForm(ComponentModelForm):
         ("Carroll1992", "Carroll (1992)"),
         # ("CAMB", "CambGrowth")
     ]
-    _initial = "GrowthFactor"
     module = growth_factor
 
 
@@ -75,7 +84,6 @@ class TransferForm(ComponentModelForm):
         ("BBKS", "BBKS (1986)",),
         ("BondEfs", "Bond-Efstathiou"),
     ]
-    _initial = "CAMB"
     module = transfer_models
     ignore_fields = ["camb_params"]
 
@@ -97,12 +105,14 @@ class TransferFramework(FrameworkForm):
     label = "Transfer Function"
 
     # Redshift at which to calculate the mass variance.
-    z = forms.FloatField(label="Redshift", initial="0", min_value=0, max_value=1100)
+    z = forms.FloatField(
+        label="Redshift", initial=str(DEFAULT_MODEL["z"]), min_value=0, max_value=1100
+    )
 
     # Power spectral index
     n = forms.FloatField(
         label=mark_safe("n<sub>s</sub> "),
-        initial="0.965",
+        initial=f"{DEFAULT_MODEL['n']}",
         min_value=-4,
         max_value=3,
         help_text="Spectral Index (note: modified by Base Cosmology)",
@@ -111,7 +121,7 @@ class TransferFramework(FrameworkForm):
     # Mass variance on a scale of 8Mpc
     sigma_8 = forms.FloatField(
         label=mark_safe("&#963<sub>8</sub>"),
-        initial="0.802",
+        initial=f"{DEFAULT_MODEL['sigma_8']}",
         min_value=0.1,
         help_text="RMS Mass Fluctuations (note: modified by Base Cosmology)",
     )
@@ -120,7 +130,7 @@ class TransferFramework(FrameworkForm):
         label="lnk range",
         minimum=np.log(1e-10),
         maximum=np.log(2e6),
-        initial="-18.42 - 9.9",
+        initial=f"{DEFAULT_MODEL['lnk_min']} - {DEFAULT_MODEL['lnk_max']}",
         step=0.1,
     )
 
@@ -129,7 +139,9 @@ class TransferFramework(FrameworkForm):
     )
 
     takahashi = forms.BooleanField(
-        label="Use Takahashi (2012) nonlinear P(k)?", required=False
+        label="Use Takahashi (2012) nonlinear P(k)?",
+        required=False,
+        initial=str(DEFAULT_MODEL["takahashi"]),
     )
 
 
@@ -156,7 +168,6 @@ class HMFForm(ComponentModelForm):
         ("Manera", "Manera (2010)"),
         ("Ishiyama", "Ishiyama (2015)"),
     ]
-    _initial = "Tinker08"
     module = fitting_functions
 
 
@@ -168,28 +179,38 @@ class FilterForm(ComponentModelForm):
         ("SharpK", "Sharp-k"),
         ("SharpKEllipsoid", "Sharp-k with ellipsoidal correction"),
     ]
-    _initial = "TopHat"
 
 
 class MassFunctionFramework(FrameworkForm):
     label = "Mass Function"
 
+    # Setting the initial here just has to correspond to the default TracerHaloModel.
+    # If the value is updated, it will get automatically reflected in its descendent models.
     logm_range = RangeSliderField(
-        label="Mass Range (log10)", minimum=0, maximum=20, initial="10 - 15", step=0.1
+        label="Mass Range (log10)",
+        minimum=0,
+        maximum=20,
+        initial=f"{DEFAULT_MODEL['Mmin']} - {DEFAULT_MODEL['Mmax']}",
+        step=0.1,
     )
 
     dlog10m = forms.FloatField(
-        label="Mass Resolution (log10)", min_value=0.005, max_value=1, initial="0.01"
+        label="Mass Resolution (log10)",
+        min_value=0.005,
+        max_value=1,
+        initial=f"{DEFAULT_MODEL['dlog10m']}",
     )
 
     delta_c = forms.FloatField(
-        label=mark_safe("&#948<sub>c</sub>"), initial="1.686", min_value=1, max_value=3
+        label=mark_safe("&#948<sub>c</sub>"),
+        initial=f"{DEFAULT_MODEL['delta_c']}",
+        min_value=1,
+        max_value=3,
     )
 
 
 class MassDefinitionForm(ComponentModelForm):
     module = mass_definitions
-    _initial = "None"
     choices = [
         ("None", "Use native definition of mass function"),
         ("SOMean", "Spherical Overdensity wrt mean"),
@@ -202,7 +223,6 @@ class MassDefinitionForm(ComponentModelForm):
 
 class WDMAlterForm(ComponentModelForm):
     module = wdm
-    _initial = "None"
     choices = [
         ("None", "No recalibration"),
         ("Schneider12_vCDM", "Schneider (2012) recalibration of CDM"),
@@ -219,7 +239,6 @@ class WDMAlterForm(ComponentModelForm):
 
 class WDMForm(ComponentModelForm):
     module = wdm
-    _initial = "Viel05"
     choices = [("Viel05", "Viel (2005)")]
 
 
@@ -229,12 +248,145 @@ class WDMFramework(FrameworkForm):
     )
 
 
+class BiasForm(ComponentModelForm):
+    module = bias
+    choices = [
+        ("Tinker10", "Tinker (2010)"),
+        ("UnityBias", "Unbiased"),
+        ("Mo96", "Mo (1996)"),
+        ("Jing98", "Jing (1998)"),
+        ("ST99", "Sheth-Tormen (1999)"),
+        ("SMT01", "Sheth-Mo-Tormen (2001)"),
+        ("Seljak04", "Seljak (2004) Without Cosmo"),
+        ("Seljak04Cosmo", "Seljak (2004) With Cosmo"),
+        ("Mandelbaum05", "Mandelbaum (2005)"),
+        ("Pillepich10", "Pillepich (2010)"),
+        ("Manera10", "Manera (2010)"),
+        ("Tinker10PBSplit", "Tinker (2010) Peak-Background Split"),
+    ]
+    field_kwargs = {"use_nu": {"label": r"Use $\nu$?"}}
+
+
+class HaloConcentrationForm(ComponentModelForm):
+    module = concentration
+    choices = [
+        ("Bullock01", "Bullock (2001) Physical Form"),
+        ("Bullock01Power", "Bullock (2001) Power-Law"),
+        ("Duffy08", "Duffy (2008) Power-Law"),
+        ("Zehavi11", "Zehavi (2011) Power-Law"),
+        ("Ludlow16", "Ludlow (2016)"),
+        ("Ludlow16Empirical", "Ludlow (2016) Empirical"),
+    ]
+
+    field_kwargs = {"sample": {"choices": [("relaxed", "relaxed"), ("full", "full")]}}
+    kind = "halo_concentration"
+
+
+class TracerConcentrationForm(HaloConcentrationForm):
+    kind = "tracer_concentration"
+
+
+class HaloProfileForm(ComponentModelForm):
+    module = profiles
+    choices = [
+        ("NFW", "NFW (1997)"),
+        ("Hernquist", "Hernquist"),
+        ("Moore", "Moore"),
+        ("GeneralizedNFW", "Generalized NFW"),
+        ("Einasto", "Einasto"),
+        ("CoredNFW", "Cored NFW"),
+    ]
+    kind = "halo_profile"
+
+
+class TracerProfileForm(HaloProfileForm):
+    kind = "tracer_profile"
+
+
+class ExclusionForm(ComponentModelForm):
+    module = halo_exclusion
+    choices = [
+        ("NoExclusion", "No Exclusion"),
+        ("Sphere", "Spherical Halos"),
+        ("DblSphere_", "Spherical Overlapping Halos"),
+        ("DblEllipsoid_", "Ellipsoidal Haloes"),
+        ("NgMatched_", "Density-Matched (Tinker 2005)"),
+    ]
+
+
+class HODForm(ComponentModelForm):
+    module = hod
+    choices = [
+        ("Zehavi05", "Zehavi (3-param), 2005"),
+        ("Zheng05", "Zheng (5-param), 2005"),
+        ("Contreras13", "Contreras (9-param), 2013"),
+        ("Geach12", "Geach (8-param), 2012"),
+        ("Tinker05", "Tinker (3-param), 2005"),
+        ("Zehavi05WithMax", "Zehavi (2005) with max"),
+        ("Zehavi05Marked", "Zehavi (2005) dimensional"),
+        ("ContinuousPowerLaw", "Continuous Power Law"),
+        ("Constant", "Constant Occupancy"),
+    ]
+
+
+class TracerHaloModelFramework(FrameworkForm):
+    label = "Halo Model"
+
+    # Setting the initial here just has to correspond to the default TracerHaloModel.
+    # If the value is updated, it will get automatically reflected in its descendent models.
+    log_r_range = RangeSliderField(
+        label="Scale Range (log10)",
+        minimum=-3,
+        maximum=3,
+        initial=f"{np.log10(DEFAULT_MODEL['rmin'])} - {np.log10(DEFAULT_MODEL['rmax'])}",
+        step=0.05,
+    )
+
+    rnum = forms.IntegerField(
+        label="Number of r bins",
+        min_value=5,
+        max_value=100,
+        initial=f"{DEFAULT_MODEL['rnum']}",
+    )
+
+    log_k_range = RangeSliderField(
+        label="Wavenumber Range (log10)",
+        minimum=-3,
+        maximum=3,
+        initial=f"{DEFAULT_MODEL['hm_logk_min']} - {DEFAULT_MODEL['hm_logk_max']}",
+        step=0.05,
+    )
+
+    hm_dlog10k = forms.FloatField(
+        label="Halo Model k bin size",
+        min_value=0.01,
+        max_value=1,
+        initial=f"{DEFAULT_MODEL['hm_dlog10k']}",
+    )
+
+    hc_spectrum = forms.ChoiceField(
+        choices=[
+            ("linear", "linear"),
+            ("nonlinear", "nonlinear"),
+            ("filtered-lin", "filtered linear"),
+            ("filtered-nl", "filtered non-linear"),
+        ],
+        label="Halo Centre Spectrum",
+        initial=str(DEFAULT_MODEL["hc_spectrum"]),
+    )
+
+    force_1halo_turnover = forms.BooleanField(
+        label="Force 1-halo turnover?",
+        required=False,
+        initial=str(DEFAULT_MODEL["force_1halo_turnover"]),
+    )
+
+
 class FrameworkInput(CompositeForm):
-    """
-    Input parameters to the overall framework
-    """
+    """Input parameters to the overall framework."""
 
     form_list = [
+        TracerHaloModelFramework,
         MassFunctionFramework,
         CosmoForm,
         TransferForm,
@@ -246,6 +398,13 @@ class FrameworkInput(CompositeForm):
         WDMFramework,
         WDMForm,
         WDMAlterForm,
+        BiasForm,
+        HaloConcentrationForm,
+        TracerConcentrationForm,
+        HaloProfileForm,
+        TracerProfileForm,
+        ExclusionForm,
+        HODForm,
     ]
 
     label = forms.CharField(
@@ -370,6 +529,58 @@ class PlotChoice(forms.Form):
             ("transfer_function", "Transfer Function"),
             ("power", "Power Spectrum"),
             ("delta_k", "Dimensionless Power Spectrum"),
+            # Halo Model
+            ("halo_bias", "Halo Bias"),
+            ("cmz_relation", "Halo Concentration-Mass Relation"),
+            ("corr_2h_auto_tracer", "2-halo tracer-tracer correlation function"),
+            ("corr_auto_tracer", "Tracer-tracer correlation function"),
+            ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
+            ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
+            ("corr_linear_mm", "Linear matter correlation function"),
+            ("total_occupation", "Tracer occupation"),
+            ("corr_1h_auto_tracer", "1-halo tracer-tracer correlation function"),
+            ("sd_bias_correction", "Scale-dependent bias correction"),
+            ("central_occupation", "Occupation of central component"),
+            ("satellite_occupation", "Occupation of satellite component"),
+            ("corr_1h_auto_matter", "1-halo matter-matter correlation function"),
+            (
+                "corr_1h_cross_tracer_matter",
+                "1-halo matter-tracer correlation function",
+            ),
+            (
+                "corr_1h_cs_auto_tracer",
+                "1-halo central-satellite tracer correlation function",
+            ),
+            (
+                "corr_1h_ss_auto_tracer",
+                "1-halo satellite-satellite tracer correlation function",
+            ),
+            ("corr_2h_auto_matter", "2-halo matter-matter correlation function"),
+            (
+                "corr_2h_cross_tracer_matter",
+                "2-halo matter-tracer correlation function",
+            ),
+            ("corr_auto_matter", "Matter-matter correlation function"),
+            ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
+            # ("halo_profile_rho", )
+            ("nonlinear_delta_k", "Non-linear dimensionless power spectrum (HALOFIT)"),
+            ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
+            ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+            ("power_1h_cross_tracer_matter", "1-halo tracer-matter power spectrum"),
+            (
+                "power_1h_cs_auto_tracer",
+                "1-halo central-satellite tracer power spectrum",
+            ),
+            (
+                "power_1h_ss_auto_tracer",
+                "1-halo satellite-satellite tracer power spectrum",
+            ),
+            ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+            ("power_2h_cross_tracer_matter", "2-halo matter-tracer power spectrum"),
+            ("power_auto_tracer", "Tracer power spectrum"),
+            ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
+            ("radii", "Radii of spherical regions"),
+            ("tracer_concentration", "Tracer conentration-mass relation"),
         ]
 
         if len(objects) > 1:
@@ -392,7 +603,10 @@ class PlotChoice(forms.Form):
                 ]
 
         self.fields["plot_choice"] = forms.ChoiceField(
-            label="Plot: ", choices=plot_choices, initial="dndm", required=False
+            label="Plot: ",
+            choices=plot_choices,
+            initial="power_auto_tracer",
+            required=False,
         )
 
         self.helper = FormHelper()
@@ -416,7 +630,9 @@ class PlotChoice(forms.Form):
     ]
 
     download_choice = forms.ChoiceField(
-        label=mark_safe('<a href="dndm.pdf" id="plot_download">Download </a>'),
+        label=mark_safe(
+            '<a href="power_auto_tracer.pdf" id="plot_download">Download </a>'
+        ),
         choices=download_choices,
         initial="pdf-current",
         required=False,

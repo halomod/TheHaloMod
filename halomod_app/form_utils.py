@@ -11,7 +11,12 @@ from crispy_forms.layout import Div, Field
 from django import forms
 from django.utils.safestring import mark_safe
 
+from halomod import TracerHaloModel
+
 logger = logging.getLogger(__name__)
+
+
+DEFAULTS = TracerHaloModel.get_all_parameter_defaults()
 
 
 class RangeSlider(forms.TextInput):
@@ -108,24 +113,14 @@ class FloatListField(forms.CharField):
                 except ValueError:
                     raise forms.ValidationError("%s is not a float" % number)
             for number in final_list:
-                if self.min_val is not None:
-                    if number < self.min_val:
-                        raise forms.ValidationError(
-                            "Must be greater than "
-                            + str(self.min_val)
-                            + " ("
-                            + str(number)
-                            + ")"
-                        )
-                if self.max_val is not None:
-                    if number > self.max_val:
-                        raise forms.ValidationError(
-                            "Must be smaller than "
-                            + str(self.max_val)
-                            + " ("
-                            + str(number)
-                            + ")"
-                        )
+                if self.min_val is not None and number < self.min_val:
+                    raise forms.ValidationError(
+                        f"Must be greater than {self.min_val} ({number})"
+                    )
+                if self.max_val is not None and number > self.max_val:
+                    raise forms.ValidationError(
+                        f"Must be smaller than {self.max_val} ({number})"
+                    )
 
         return final_list
 
@@ -236,6 +231,16 @@ class ComponentModelForm(forms.Form):
         if self.kind is None:
             self.kind = self.__class__.__name__.split("Form")[0].lower()
 
+        # Get initial model choice based on defaults of TracerHaloModel.
+        if self._initial is None:
+            df = DEFAULTS.get(self.kind + "_model")
+            if isinstance(df, str):
+                self._initial = df
+            elif df is None:
+                self._initial = "None"
+            else:
+                self._initial = df.__name__
+
         # Fill the fields
         if not self.multi:
             self.fields[f"{self.kind}_model"] = forms.ChoiceField(
@@ -289,16 +294,22 @@ class ComponentModelForm(forms.Form):
         for key, val in getattr(cls, "_defaults", {}).items():
             name = f"{self.kind}_{model}_{key}"
 
-            if key in self.ignore_fields:
-                continue
-            if model + "_" + key in self.ignore_fields:
-                continue
-            if isinstance(val, dict):
-                # don't allow dictionaries for now
+            if (
+                key in self.ignore_fields
+                or model + "_" + key in self.ignore_fields
+                or isinstance(val, dict)
+                or val is None
+            ):
                 continue
 
+            field_types = {
+                float: forms.FloatField,
+                bool: forms.BooleanField,
+                str: forms.ChoiceField,
+            }
+
             fkw = self.field_kwargs.get(key, {})
-            thisfield = fkw.pop("type", forms.FloatField)
+            thisfield = fkw.pop("type", field_types.get(type(val), forms.FloatField))
 
             self.fields[name] = thisfield(
                 label=fkw.pop("label", key), initial=str(val), required=False, **fkw
