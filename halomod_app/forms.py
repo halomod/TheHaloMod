@@ -139,7 +139,9 @@ class TransferFramework(FrameworkForm):
     )
 
     takahashi = forms.BooleanField(
-        label="Use Takahashi (2012) nonlinear P(k)?", required=False
+        label="Use Takahashi (2012) nonlinear P(k)?",
+        required=False,
+        initial=str(DEFAULT_MODEL["takahashi"]),
     )
 
 
@@ -280,10 +282,111 @@ class HaloConcentrationForm(ComponentModelForm):
     kind = "halo_concentration"
 
 
+class TracerConcentrationForm(HaloConcentrationForm):
+    kind = "tracer_concentration"
+
+
+class HaloProfileForm(ComponentModelForm):
+    module = profiles
+    choices = [
+        ("NFW", "NFW (1997)"),
+        ("Hernquist", "Hernquist"),
+        ("Moore", "Moore"),
+        ("GeneralizedNFW", "Generalized NFW"),
+        ("Einasto", "Einasto"),
+        ("CoredNFW", "Cored NFW"),
+    ]
+    kind = "halo_profile"
+
+
+class TracerProfileForm(HaloProfileForm):
+    kind = "tracer_profile"
+
+
+class ExclusionForm(ComponentModelForm):
+    module = halo_exclusion
+    choices = [
+        ("NoExclusion", "No Exclusion"),
+        ("Sphere", "Spherical Halos"),
+        ("DblSphere_", "Spherical Overlapping Halos"),
+        ("DblEllipsoid_", "Ellipsoidal Haloes"),
+        ("NgMatched_", "Density-Matched (Tinker 2005)"),
+    ]
+
+
+class HODForm(ComponentModelForm):
+    module = hod
+    choices = [
+        ("Zehavi05", "Zehavi (3-param), 2005"),
+        ("Zheng05", "Zheng (5-param), 2005"),
+        ("Contreras13", "Contreras (9-param), 2013"),
+        ("Geach12", "Geach (8-param), 2012"),
+        ("Tinker05", "Tinker (3-param), 2005"),
+        ("Zehavi05WithMax", "Zehavi (2005) with max"),
+        ("Zehavi05Marked", "Zehavi (2005) dimensional"),
+        ("ContinuousPowerLaw", "Continuous Power Law"),
+        ("Constant", "Constant Occupancy"),
+    ]
+
+
+class TracerHaloModelFramework(FrameworkForm):
+    label = "Halo Model"
+
+    # Setting the initial here just has to correspond to the default TracerHaloModel.
+    # If the value is updated, it will get automatically reflected in its descendent models.
+    log_r_range = RangeSliderField(
+        label="Scale Range (log10)",
+        minimum=-3,
+        maximum=3,
+        initial=f"{np.log10(DEFAULT_MODEL['rmin'])} - {np.log10(DEFAULT_MODEL['rmax'])}",
+        step=0.05,
+    )
+
+    rnum = forms.IntegerField(
+        label="Number of r bins",
+        min_value=5,
+        max_value=100,
+        initial=f"{DEFAULT_MODEL['rnum']}",
+    )
+
+    log_k_range = RangeSliderField(
+        label="Wavenumber Range (log10)",
+        minimum=-3,
+        maximum=3,
+        initial=f"{DEFAULT_MODEL['hm_logk_min']} - {DEFAULT_MODEL['hm_logk_max']}",
+        step=0.05,
+    )
+
+    hm_dlog10k = forms.FloatField(
+        label="Halo Model k bin size",
+        min_value=0.01,
+        max_value=1,
+        initial=f"{DEFAULT_MODEL['hm_dlog10k']}",
+    )
+
+    hc_spectrum = forms.ChoiceField(
+        choices=[
+            ("linear", "linear"),
+            ("nonlinear", "nonlinear"),
+            ("filtered-lin", "filtered linear"),
+            ("filtered-nl", "filtered non-linear"),
+        ],
+        label="Halo Centre Spectrum",
+        initial=str(DEFAULT_MODEL["hc_spectrum"]),
+    )
+
+    force_1halo_turnover = forms.BooleanField(
+        label="Force 1-halo turnover?",
+        required=False,
+        initial=str(DEFAULT_MODEL["force_1halo_turnover"]),
+    )
+
+
 class FrameworkInput(CompositeForm):
     """Input parameters to the overall framework."""
 
     form_list = [
+        TracerHaloModelFramework,
         MassFunctionFramework,
         CosmoForm,
         TransferForm,
@@ -297,6 +400,11 @@ class FrameworkInput(CompositeForm):
         WDMAlterForm,
         BiasForm,
         HaloConcentrationForm,
+        TracerConcentrationForm,
+        HaloProfileForm,
+        TracerProfileForm,
+        ExclusionForm,
+        HODForm,
     ]
 
     label = forms.CharField(

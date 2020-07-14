@@ -10,6 +10,8 @@ Created on Jun 12, 2013
 import os
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+import dill
+from django.contrib.sessions import serializers
 
 # ===============================================================================
 # SETUP LOCAL/PRODUCTION SPECIFIC VARIABLES
@@ -27,7 +29,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 CRISPY_FAIL_SILENTLY = not DEBUG
 
-
+# Change the Pickle Serializer to use dill.
+serializers.pickle = dill
 # ===============================================================================
 # THE PROJECT DIRECTORY
 # ===============================================================================

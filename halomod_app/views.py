@@ -15,6 +15,7 @@ from django.views.generic.edit import FormView
 from hmf import __version__
 from halomod import wdm, TracerHaloModel
 from tabination.views import TabView
+import dill
 
 from . import forms
 from . import utils
@@ -74,6 +75,14 @@ class CalculatorInputBase(FormView):
             elif k == "logm_range":
                 frmwrk_dict["Mmin"] = v[0]
                 frmwrk_dict["Mmax"] = v[1]
+                continue
+            elif k == "log_r_range":
+                frmwrk_dict["rmin"] = 10 ** v[0]
+                frmwrk_dict["rmax"] = 10 ** v[1]
+                continue
+            elif k == "log_k_range":
+                frmwrk_dict["hm_logk_min"] = v[0]
+                frmwrk_dict["hm_logk_max"] = v[1]
                 continue
 
             component = getattr(form.fields[k], "component", None)
@@ -147,6 +156,10 @@ class CalculatorInputCreate(CalculatorInputBase):
         prev_label = self.kwargs.get("label", None)
 
         forms = self.request.session.get("forms", None)
+
+        if prev_label:
+            print("PREVIOUS FORM:")
+            print(forms.get(prev_label, None))
 
         kwargs.update(
             current_models=self.request.session.get("objects", None),

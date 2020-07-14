@@ -21,7 +21,10 @@ def hmf_driver(cls=TracerHaloModel, previous: [None, TracerHaloModel] = None, **
     elif "wdm_model" not in kwargs and isinstance(previous, HaloModelWDM):
         return TracerHaloModel(**kwargs)
     else:
+        #        print("PREVIOUS: ", list(previous._TracerHaloModel__recalc_prop_par.keys()))
+        #        print("KWARGS: ", kwargs)
         this = previous.clone(**kwargs)
+        #        print("THIS: ", list(this._TracerHaloModel__recalc_prop_par.keys()))
 
         # TODO: this is a hack, and should be fixed in hmf
         # we have to set all _params whose model has been changed to {}
@@ -116,8 +119,9 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
 MLABEL = r"Mass $(M_{\odot}h^{-1})$"
 KLABEL = r"Wavenumber, $k$ [$h$/Mpc]"
 RLABEL = r"Scale, $r$ [Mpc/$h$]"
+KHMLABEL = r"Fourier Scale, $k$ [$h$/Mpc]"
 
-XLABELS = {"m": MLABEL, "k": KLABEL, "r": RLABEL}
+XLABELS = {"m": MLABEL, "k": KLABEL, "r": RLABEL, "k_hm": KHMLABEL}
 
 KEYMAP = {
     "dndm": {
@@ -249,57 +253,57 @@ KEYMAP = {
         "yscale": "log",
     },
     "power_2h_auto_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"2-halo matter $P_{mm}^{2h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_1h_auto_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"1-halo matter $P_{mm}^{1h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_auto_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"2-halo matter $P_{mm}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_auto_tracer": {
-        "xlab": KLABEL,
-        "ylab": r"Matter $P_{TT}(k)$ [Mpc$^3 h^{-3}$]",
+        "xlab": KHMLABEL,
+        "ylab": r"Tracer $P_{TT}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_1h_auto_tracer": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"1-halo tracer $P_{TT}^{1h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_2h_auto_tracer": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"2-halo tracer $P_{TT}^{2h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_1h_cs_auto_tracer": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"1-halo cen-sat tracer $P_{TT}^{1h, cs}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_1h_ss_auto_tracer": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"1-halo sat-sat tracer $P_{TT}^{1h, ss}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_1h_cross_tracer_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"1-halo matter-tracer $P_{m\times T}^{1h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_2h_cross_tracer_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"2-halo matter-tracer $P_{m\times T}^{2h}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
     "power_cross_tracer_matter": {
-        "xlab": KLABEL,
+        "xlab": KHMLABEL,
         "ylab": r"Matter-tracer $P_{m\times T}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
