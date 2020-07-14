@@ -12,6 +12,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 import dill
 from django.contrib.sessions import serializers
+from django.core.cache.backends import locmem
 
 # ===============================================================================
 # SETUP LOCAL/PRODUCTION SPECIFIC VARIABLES
@@ -30,7 +31,9 @@ TEMPLATE_DEBUG = DEBUG
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 # Change the Pickle Serializer to use dill.
-serializers.pickle = dill
+serializers.pickle = dill  # noqa
+locmem.pickle = dill  # noqa
+
 # ===============================================================================
 # THE PROJECT DIRECTORY
 # ===============================================================================
@@ -228,6 +231,13 @@ SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "TheHaloMod.wsgi.application"
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Use a local-memory cache session engine. If we don't do this,
+# the session objects (which can be quite large, since we're pickling full halomodel
+# instances) are saved to the db. This is bad firstly because it's slow, and secondly
+# because the db get's filled up with stuff we never want to commit to git.
+# On the actual site, we should probably use memcached instead of the locmem cache.
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # ===============================================================================
 # EMAIL SETUP
