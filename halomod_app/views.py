@@ -12,10 +12,10 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from hmf import __version__
+import hmf
+import halomod
 from halomod import wdm, TracerHaloModel
 from tabination.views import TabView
-import dill
 
 from . import forms
 from . import utils
@@ -190,7 +190,14 @@ class CalculatorInputEdit(CalculatorInputCreate):
         # If editing, and the label was changed, we need to remove the old label.
         if form.cleaned_data["label"] != self.kwargs["label"]:
             del self.request.session["objects"][self.kwargs["label"]]
-            del self.request.session["forms"][self.kwargs["label"]]
+
+            try:
+                del self.request.session["forms"][self.kwargs["label"]]
+            except KeyError:
+                # Special-case the original 'default', since it doesn't exist as a form
+                # at first.
+                if self.kwargs["label"] != "default":
+                    raise
 
         return result
 
@@ -232,6 +239,7 @@ class ViewPlots(BaseTab):
 
         self.form = forms.PlotChoice(request)
 
+        print("IN ViewPlots:", list(request.session["forms"].keys()))
         self.warnings = ""  # request.session['warnings']
         return self.render_to_response(
             self.get_context_data(
@@ -309,7 +317,9 @@ def header_txt(request):
     # Write the parameter info
     response.write("File Created On: " + str(datetime.datetime.now()) + "\n")
     response.write("With version " + calc_version + " of halomod_app \n")
-    response.write("And version " + __version__ + " of hmf (backend) \n")
+    response.write("And version " + hmf.__version__ + " of hmf (backend) \n")
+    response.write("And version " + halomod.__version__ + " of halomod (backend) \n")
+
     response.write("\n")
     response.write("SETS OF PARAMETERS USED \n")
 
@@ -344,7 +354,7 @@ def data_output(request):
 
             s = io.BytesIO()
 
-            s.write(f"# [0] {utils.XLABELS[kind]}")
+            s.write(f"# [0] {utils.XLABELS[kind]}".encode())
 
             items = {
                 k: utils.KEYMAP[k]["ylab"]
@@ -352,11 +362,17 @@ def data_output(request):
                 if utils.KEYMAP[k]["xlab"] == utils.XLABELS[kind]
             }
 
-            for i, (label, ylab) in enumerate(items.items()):
-                s.write(f"# [{i+1}] {ylab}")
+            for j, (label, ylab) in enumerate(items.items()):
+                if getattr(o, label) is not None:
+                    s.write(f"# [{j+1}] {ylab}".encode())
 
             out = np.array(
-                [getattr(o, kind)] + [getattr(o, label) for label in items]
+                [getattr(o, kind)]
+                + [
+                    getattr(o, label)
+                    for label in items
+                    if getattr(o, label) is not None
+                ]
             ).T
             np.savetxt(s, out)
 

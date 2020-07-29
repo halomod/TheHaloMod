@@ -318,7 +318,7 @@ KEYMAP = {
         "yscale": "log",
     },
     "radii": {"xlab": MLABEL, "ylab": r"Radius [Mpc/$h$]", "yscale": "log",},
-    "tracer_concentration": {
+    "tracer_cmz_relation": {
         "xlab": MLABEL,
         "ylab": r"Tracer Concentration",
         "yscale": "log",

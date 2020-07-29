@@ -516,71 +516,122 @@ class PlotChoice(forms.Form):
         objects = request.session["objects"]
 
         plot_choices = [
-            ("dndm", "dn/dm"),
-            ("dndlnm", "dn/dln(m)"),
-            ("dndlog10m", "dn/dlog10(m)"),
-            ("fsigma", mark_safe("f(&#963)")),
-            ("sigma", mark_safe("&#963 (mass variance)")),
-            ("lnsigma", mark_safe("ln(1/&#963)")),
-            ("n_eff", "Effective Spectral Index"),
-            ("ngtm", "n(>m)"),
-            ("rho_ltm", mark_safe("&#961(&#60m)")),
-            ("rho_gtm", mark_safe("&#961(>m)")),
-            ("transfer_function", "Transfer Function"),
-            ("power", "Power Spectrum"),
-            ("delta_k", "Dimensionless Power Spectrum"),
-            # Halo Model
-            ("halo_bias", "Halo Bias"),
-            ("cmz_relation", "Halo Concentration-Mass Relation"),
-            ("corr_2h_auto_tracer", "2-halo tracer-tracer correlation function"),
-            ("corr_auto_tracer", "Tracer-tracer correlation function"),
-            ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
-            ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
-            ("corr_linear_mm", "Linear matter correlation function"),
-            ("total_occupation", "Tracer occupation"),
-            ("corr_1h_auto_tracer", "1-halo tracer-tracer correlation function"),
-            ("sd_bias_correction", "Scale-dependent bias correction"),
-            ("central_occupation", "Occupation of central component"),
-            ("satellite_occupation", "Occupation of satellite component"),
-            ("corr_1h_auto_matter", "1-halo matter-matter correlation function"),
             (
-                "corr_1h_cross_tracer_matter",
-                "1-halo matter-tracer correlation function",
+                "Mass Function",
+                (
+                    ("dndm", "dn/dm"),
+                    ("dndlnm", "dn/dln(m)"),
+                    ("dndlog10m", "dn/dlog10(m)"),
+                    ("fsigma", mark_safe("f(&#963)")),
+                    ("sigma", mark_safe("&#963 (mass variance)")),
+                    ("lnsigma", mark_safe("ln(1/&#963)")),
+                    ("n_eff", "Effective Spectral Index"),
+                    ("ngtm", "n(>m)"),
+                    ("rho_ltm", mark_safe("&#961(&#60m)")),
+                    ("rho_gtm", mark_safe("&#961(>m)")),
+                ),
             ),
             (
-                "corr_1h_cs_auto_tracer",
-                "1-halo central-satellite tracer correlation function",
+                "Linear Structure",
+                (
+                    ("transfer_function", "Transfer Function"),
+                    ("power", "Power Spectrum"),
+                    ("delta_k", "Dimensionless Power Spectrum"),
+                    (
+                        "nonlinear_delta_k",
+                        "Non-linear dimensionless power spectrum (HALOFIT)",
+                    ),
+                    ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
+                    ("corr_linear_mm", "Linear matter correlation function"),
+                ),
             ),
             (
-                "corr_1h_ss_auto_tracer",
-                "1-halo satellite-satellite tracer correlation function",
-            ),
-            ("corr_2h_auto_matter", "2-halo matter-matter correlation function"),
-            (
-                "corr_2h_cross_tracer_matter",
-                "2-halo matter-tracer correlation function",
-            ),
-            ("corr_auto_matter", "Matter-matter correlation function"),
-            ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
-            # ("halo_profile_rho", )
-            ("nonlinear_delta_k", "Non-linear dimensionless power spectrum (HALOFIT)"),
-            ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
-            ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
-            ("power_1h_cross_tracer_matter", "1-halo tracer-matter power spectrum"),
-            (
-                "power_1h_cs_auto_tracer",
-                "1-halo central-satellite tracer power spectrum",
+                "Halos and HODs",
+                (
+                    ("halo_bias", "Halo Bias"),
+                    ("cmz_relation", "Halo Concentration-Mass Relation"),
+                    ("total_occupation", "Tracer occupation"),
+                    ("central_occupation", "Occupation of central component"),
+                    ("satellite_occupation", "Occupation of satellite component"),
+                    ("radii", "Radii of spherical regions"),
+                    ("tracer_concentration", "Tracer conentration-mass relation"),
+                ),
             ),
             (
-                "power_1h_ss_auto_tracer",
-                "1-halo satellite-satellite tracer power spectrum",
+                "Halo Model Spectra",
+                (
+                    # Matter power
+                    ("power_auto_matter", "Matter-matter power spectrum"),
+                    ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
+                    ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
+                    # Tracer Power
+                    ("power_auto_tracer", "Tracer power spectrum"),
+                    ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+                    ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+                    (
+                        "power_1h_cs_auto_tracer",
+                        "1-halo central-satellite tracer power spectrum",
+                    ),
+                    (
+                        "power_1h_ss_auto_tracer",
+                        "1-halo satellite-satellite tracer power spectrum",
+                    ),
+                    # Cross Power
+                    ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
+                    (
+                        "power_1h_cross_tracer_matter",
+                        "1-halo tracer-matter power spectrum",
+                    ),
+                    (
+                        "power_2h_cross_tracer_matter",
+                        "2-halo matter-tracer power spectrum",
+                    ),
+                ),
             ),
-            ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
-            ("power_2h_cross_tracer_matter", "2-halo matter-tracer power spectrum"),
-            ("power_auto_tracer", "Tracer power spectrum"),
-            ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
-            ("radii", "Radii of spherical regions"),
-            ("tracer_concentration", "Tracer conentration-mass relation"),
+            (
+                "Halo Model Correlations",
+                (
+                    # Matter
+                    ("corr_auto_matter", "Matter-matter correlation function"),
+                    (
+                        "corr_2h_auto_matter",
+                        "2-halo matter-matter correlation function",
+                    ),
+                    (
+                        "corr_1h_auto_matter",
+                        "1-halo matter-matter correlation function",
+                    ),
+                    # Tracer
+                    ("corr_auto_tracer", "Tracer-tracer correlation function"),
+                    (
+                        "corr_2h_auto_tracer",
+                        "2-halo tracer-tracer correlation function",
+                    ),
+                    (
+                        "corr_1h_auto_tracer",
+                        "1-halo tracer-tracer correlation function",
+                    ),
+                    (
+                        "corr_1h_cs_auto_tracer",
+                        "1-halo central-satellite tracer correlation function",
+                    ),
+                    (
+                        "corr_1h_ss_auto_tracer",
+                        "1-halo satellite-satellite tracer correlation function",
+                    ),
+                    # Cross
+                    ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
+                    (
+                        "corr_1h_cross_tracer_matter",
+                        "1-halo matter-tracer correlation function",
+                    ),
+                    (
+                        "corr_2h_cross_tracer_matter",
+                        "2-halo matter-tracer correlation function",
+                    ),
+                    ("sd_bias_correction", "Scale-dependent bias correction"),
+                ),
+            ),
         ]
 
         if len(objects) > 1:
