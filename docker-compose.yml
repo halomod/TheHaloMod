@@ -2,7 +2,8 @@ version: '3.7'
 
 services:
   app:
-    build: .
+    build:
+      context: .
     volumes:
     - .:/app
     environment:
@@ -16,11 +17,11 @@ services:
       - 8000:80
     volumes:
       - ./nginx:/etc/nginx/conf.d
-    depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
+    depends_on:
       - app
     networks:
       - nginx_network
 
-networks:  # <-- and here
+networks:
   nginx_network:
     driver: bridge
