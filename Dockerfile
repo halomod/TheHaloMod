@@ -35,7 +35,6 @@ RUN chown -R 755 /opt/venv
 # RUN chmod -R 755 /vol/web
 USER user
 
-RUN python -m
 RUN bash -c 'echo $(which gunicorn)'
 
 CMD ["gunicorn", "--chdir", "app", "--bind", ":8000", "TheHaloMod.wsgi:application"]
