@@ -28,7 +28,7 @@ RUN ls /app
 # RUN mkdir -p /vol/web/media
 # RUN mkdir -p /vol/web/static
 
-RUN adduser --disabled-password user
+RUN adduser --disabled-password --gecos "" user
 # RUN chown -R user:user /vol
 RUN chown -R user:user /opt/venv
 RUN chown -R 755 /opt/venv
