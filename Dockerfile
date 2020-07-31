@@ -19,6 +19,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN bash -c 'echo $(which python)'
 
 COPY requirements.txt ./
+RUN python -m pip install wheel
 RUN python -m pip install -r requirements.txt
 RUN bash -c 'python -m pip freeze'
 
@@ -29,9 +30,6 @@ RUN ls /app
 # RUN mkdir -p /vol/web/static
 
 RUN adduser --disabled-password --gecos "" user
-# RUN chown -R user:user /vol
-RUN chown -R user:user /opt/venv
-RUN chown -R 755 /opt/venv
 # RUN chmod -R 755 /vol/web
 USER user
 
