@@ -33,6 +33,7 @@ RUN adduser --disabled-password --gecos "" user
 # RUN chmod -R 755 /vol/web
 USER user
 
+RUN mkdir /webhost
 RUN bash -c 'echo $(which gunicorn)'
 
-CMD ["gunicorn", "--chdir", "app", "--bind", ":8000", "TheHaloMod.wsgi:application"]
+CMD ["gunicorn", "--chdir", "app", "--bind", ":8000", "--certfile", '/webhost/galileo_sese_asu_edu_cert.cer', '--keyfile', "/webhost/galileo.key", "TheHaloMod.wsgi:application"]

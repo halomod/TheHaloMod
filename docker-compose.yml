@@ -6,6 +6,8 @@ services:
       context: .
     volumes:
     - .:/app
+    - /home/locoadmin/webhost/:/webhost
+    - galileo_sese_asu_edu_cert.cer --keyfile=/home/locoadmin/webhost/galileo.key
     environment:
       - DEBUG=1
     networks:
