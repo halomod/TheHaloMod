@@ -5,9 +5,7 @@ services:
     build:
       context: .
     volumes:
-    - .:/app
-    - /home/locoadmin/webhost/:/webhost
-    - galileo_sese_asu_edu_cert.cer --keyfile=/home/locoadmin/webhost/galileo.key
+      - .:/app
     environment:
       - DEBUG=1
     networks:
@@ -16,9 +14,10 @@ services:
   nginx:
     image: nginx:1.13
     ports:
-      - 8000:80
+      - 8000:443
     volumes:
       - ./nginx:/etc/nginx/conf.d
+      - /home/locoadmin/webhost/:/webhost
     depends_on:
       - app
     networks:

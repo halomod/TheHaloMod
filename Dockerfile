@@ -29,11 +29,12 @@ RUN ls /app
 # RUN mkdir -p /vol/web/media
 # RUN mkdir -p /vol/web/static
 
+RUN mkdir /webhost
+
 RUN adduser --disabled-password --gecos "" user
-# RUN chmod -R 755 /vol/web
+RUN chmod +x entrypoint.sh
+# RUN chown user:user entrypoint.sh
+
 USER user
 
-RUN mkdir /webhost
-RUN bash -c 'echo $(which gunicorn)'
-
-CMD ["gunicorn", "--chdir", "app", "--bind", ":8000", "--certfile", '/webhost/galileo_sese_asu_edu_cert.cer', '--keyfile', "/webhost/galileo.key", "TheHaloMod.wsgi:application"]
+CMD ["sh", "entrypoint.sh"]
