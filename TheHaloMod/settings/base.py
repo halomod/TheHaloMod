@@ -15,7 +15,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 env = environ.Env()
 
-DOT_ENV_FILE = env("ENV_FILE", default=".env/production")
+DOT_ENV_FILE = env("ENV_FILE", default=".envs/production")
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env

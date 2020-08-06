@@ -1,6 +1,6 @@
 # TheHaloMod
 
-**The web-app for calculating Halo Model quantities!**
+**The web-app for calculating Halo Model quantities.**
 
 This is the source code for [TheHaloMod](http://hmf.icrar.org), which uses
 the [hmf](https://github.com/steven-murray/hmf) and [halomod](https://github.com/steven-murray/halomod)
@@ -50,5 +50,28 @@ HMF are given.
 
 ### Running the Server Locally
 
-To run the local server for development, do `python manage.py runserver` from the top
-level. It should open a browser tab for you.
+To set up locally, you should install `poetry`, then run `poetry install` in the
+top-level directory. This will install all dependencies.
+Also run `export DJANGO_SETTINGS_MODULE=TheHaloMod.settings.local` and `export DOT_ENV_FILE=.env/local`.
+
+Then, run
+`poetry run python manage.py runserver` to run the dev server.
+
+
+## Deployment
+
+I'm gonna use this space to remind _myself_ how I go about deployment for `TheHaloMod`.
+For local dev, just use the above instructions. To deploy, commit to github and merge
+to master. Then, on the server itself, go to the repo, pull, then run
+`DOT_ENV_FILE=.envs/test DJANGO_SETTINGS_MODULE=TheHaloMod.settings.test docker-compose up --build`
+to start the test webapp. After making sure that it's running OK, run
+`DOT_ENV_FILE=.envs/production DJANGO_SETTINGS_MODULE=TheHaloMod.settings.production docker-compose up --build`
+to make the update the production app.
+
+Secret settings are set in the `.env/` directory, and not kept in VCS for obvious reasons.
+This `.env/` directory _is_ in the repo on the server itself, and my local copy on my
+own computer. In order to keep it safe, it's also backed up. The different compose files
+essentially just take different `.env/` files in, and set a couple of different env
+variables.
+
+Locally,

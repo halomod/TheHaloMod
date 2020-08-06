@@ -7,7 +7,9 @@ services:
     volumes:
       - .:/app
     environment:
-      - DEBUG=1
+      - DJANGO_DEBUG
+      - DOT_ENV_FILE
+      - DJANGO_SETTINGS_MODULE
     networks:
       - nginx_network
 
