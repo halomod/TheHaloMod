@@ -1,32 +1,27 @@
-"""
-Created on Jun 12, 2013
-
-@author: Steven
-"""
+"""Base settings to build other settings off."""
 
 # ===============================================================================
 # THIRD_PARTY IMPORTS
 # ===============================================================================
 import os
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 import dill
 from django.contrib.sessions import serializers
 from django.core.cache.backends import locmem
+from pathlib import Path
+import environ
 
-# ===============================================================================
-# SETUP LOCAL/PRODUCTION SPECIFIC VARIABLES
-# ===============================================================================
-from .secret_settings import (
-    GOOGLE_ANALYTICS_PROPERTY_ID,
-    MY_EMAIL,
-    HOST_EMAIL,
-    EMAIL_HOST_PASSWORD,
-    EMAIL_PORT,
-    SECRET_KEY,
-)
 
-DEBUG = True
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+
+env = environ.Env()
+
+DOT_ENV_FILE = env("ENV_FILE", default=".env/production")
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+if READ_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(ROOT_DIR / DOT_ENV_FILE))
+
+DEBUG = env.bool("DJANGO_DEBUG", False)
 TEMPLATE_DEBUG = DEBUG
 CRISPY_FAIL_SILENTLY = not DEBUG
 
@@ -35,24 +30,12 @@ serializers.pickle = dill  # noqa
 locmem.pickle = dill  # noqa
 
 # ===============================================================================
-# THE PROJECT DIRECTORY
-# ===============================================================================
-# The directory above the one this very file is in (top-level halomod_app)
-ROOT_DIR = os.path.split(os.path.dirname(__file__))[0]
-
-# ===============================================================================
-# SOME NON-DEFAULT SETTINGS
-# ===============================================================================
-# This apparently needs to be here to let people actually access the site?
-ALLOWED_HOSTS = "*"
-
-# ===============================================================================
 # DATABASE SETTINGS
 # ===============================================================================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        "NAME": ROOT_DIR + "/db",  # Or path to database file if using sqlite3.
+        "NAME": str(ROOT_DIR / "db"),  # Or path to database file if using sqlite3.
         "USER": "",  # Not used with sqlite3.
         "PASSWORD": "",  # Not used with sqlite3.
         "HOST": "",  # Set to empty string for localhost. Not used with sqlite3.
@@ -63,7 +46,7 @@ DATABASES = {
 # ===============================================================================
 # INSTALLED APPS
 # ===============================================================================
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -73,11 +56,7 @@ INSTALLED_APPS = (
     "analytical",
     "crispy_forms",
     "halomod_app",
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-)
+]
 
 # ===============================================================================
 # CRISPY SETTINGS
@@ -99,13 +78,19 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s "
+            "%(process)d %(thread)d %(message)s"
+        }
+    },
     "filters": {
         "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
     },
     "handlers": {
         "console_dev": {
-            "level": os.getenv("LOGLEVEL", "ERROR"),
+            "level": env("LOG_LEVEL", default="ERROR"),
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
         },
@@ -115,6 +100,7 @@ LOGGING = {
             "class": "logging.StreamHandler",
         },
     },
+    "root": {"level": "INFO", "handlers": ["console_dev", "console_prod"]},
     "loggers": {
         "django.request": {
             "handlers": ["console_dev", "console_prod"],
@@ -159,7 +145,7 @@ USE_TZ = True
 # ===============================================================================
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ROOT_DIR + "/media/"
+MEDIA_ROOT = ROOT_DIR / "media"
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -170,7 +156,7 @@ MEDIA_URL = "/media/"
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(ROOT_DIR, "static")
+STATIC_ROOT = ROOT_DIR / "static"
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -191,43 +177,25 @@ STATICFILES_FINDERS = (
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(ROOT_DIR, "templates")],
+        "DIRS": [ROOT_DIR / "templates"],
         "APP_DIRS": True,
     }
 ]
 
-# # List of callables that know how to import templates from various sources.
-# TEMPLATE_LOADERS = (
-#     'django.template.loaders.filesystem.Loader',
-#     'django.template.loaders.app_directories.Loader',
-#     #     'django.template.loaders.eggs.Loader',
-# )
-#
-# TEMPLATE_DIRS = (os.path.join(ROOT_DIR, 'templates'),
-#                  # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-#                  # Always use forward slashes, even on Windows.
-#                  # Don't forget to use absolute paths, not relative paths.
-#                  )
-
-# TEMPLATE_CONTEXT_PROCESSORS = (
-#     "django.core.context_processors.static",
-# )
 # ===============================================================================
 # MISCELLANEOUS
 # ===============================================================================
-
-MIDDLEWARE = (
+MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    #    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #    'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
 
 ROOT_URLCONF = "TheHaloMod.urls"
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
+
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "TheHaloMod.wsgi.application"
 SESSION_SAVE_EVERY_REQUEST = True
@@ -239,24 +207,34 @@ SESSION_SAVE_EVERY_REQUEST = True
 # On the actual site, we should probably use memcached instead of the locmem cache.
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
+# ==============================================================================
+# SECURITY
+# ==============================================================================
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
+SESSION_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
+CSRF_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
+SECURE_BROWSER_XSS_FILTER = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
+X_FRAME_OPTIONS = "DENY"
+
+
 # ===============================================================================
 # EMAIL SETUP
 # ===============================================================================
-EMAIL_USE_TLS = (
-    True  # Whether to use a TLS (secure) connection when talking to the SMTP server.
-)
+HOST_EMAIL = env("HOST_EMAIL", default="!!! SET HOST_EMAIL !!!")
+
+# Whether to use a TLS (secure) connection when talking to the SMTP server.
+EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = HOST_EMAIL
 SERVER_EMAIL = HOST_EMAIL
 DEFAULT_FROM_EMAIL = SERVER_EMAIL
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 
+MY_EMAIL = env("MY_EMAIL")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 ADMINS = (("Steven", MY_EMAIL),)
-
 MANAGERS = ADMINS
 CONTACT_RECIPIENTS = MY_EMAIL
-
-if not DEBUG:
-    sentry_sdk.init(
-        dsn="https://092d72356e5c4ef2a8c9025e45bd2202@sentry.io/1449158",
-        integrations=[DjangoIntegration()],
-    )
