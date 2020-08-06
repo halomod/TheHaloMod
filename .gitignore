@@ -2,6 +2,6 @@
 *~
 .pydevproject
 .project
-TheHaloMod/secret_settings.py
+**/secret_settings.py
 *.DS_Store
 \.idea/

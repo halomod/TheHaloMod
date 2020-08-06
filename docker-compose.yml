@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=1
+    networks:
+      - nginx_network
+
+  nginx:
+    image: nginx:1.13
+    ports:
+      - 8000:443
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - /home/locoadmin/webhost/:/webhost
+    depends_on:
+      - app
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
