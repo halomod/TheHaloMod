@@ -24,6 +24,7 @@ from halomod import halo_exclusion
 from halomod import hod
 from halomod import wdm as hm_wdm
 from halomod import TracerHaloModel
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -415,7 +416,13 @@ class FrameworkInput(CompositeForm):
     )
 
     def __init__(
-        self, model_label=None, current_models=None, edit=False, *args, **kwargs
+        self,
+        model_label=None,
+        current_models=None,
+        edit=False,
+        derive_from_obj=None,
+        *args,
+        **kwargs,
     ):
 
         self.current_models = current_models
@@ -502,7 +509,83 @@ class FrameworkInput(CompositeForm):
         if dlogm > (float(mrange[1]) - float(mrange[0])) / 2:
             raise forms.ValidationError("Mass step-size must be less than its range.")
 
+        cls, frmwk_dict = self.cleaned_data_to_framework_dict(cleaned_data)
+        logger.info(f"Constructed hmf_dct: {frmwk_dict}")
+
+        try:
+            self.halomod_obj = utils.hmf_driver(
+                previous=self.derivative_model, cls=cls, **frmwk_dict
+            )
+        except Exception as e:
+            logger.error(f"Got form error: {e}")
+            raise forms.ValidationError(str(e))
+
+        self.halomod_cls = cls
+        self.halomod_dct = frmwk_dict
+
         return cleaned_data
+
+    def cleaned_data_to_framework_dict(self, cleaned_data):
+        # get all the _params out
+        out = {}
+        for k, v in cleaned_data.items():
+            # label is not a halo model argument
+            if k == "label":
+                continue
+            elif k == "lnk_range":
+                out["lnk_min"] = v[0]
+                out["lnk_max"] = v[1]
+                continue
+            elif k == "logm_range":
+                out["Mmin"] = v[0]
+                out["Mmax"] = v[1]
+                continue
+            elif k == "log_r_range":
+                out["rmin"] = 10 ** v[0]
+                out["rmax"] = 10 ** v[1]
+                continue
+            elif k == "log_k_range":
+                out["hm_logk_min"] = v[0]
+                out["hm_logk_max"] = v[1]
+                continue
+
+            component = getattr(self.fields[k], "component", None)
+
+            if component:
+                form_model = cleaned_data[component + "_model"]
+                # the model could be empty if component is, say, cosmo
+                model = getattr(self.fields[k], "model", form_model)
+
+                # Ignore params that don't belong to the chosen model
+                if model != form_model:
+                    continue
+
+                dctkey = component + "_params"
+                paramname = self.fields[k].paramname
+
+                if dctkey not in out:
+                    out[dctkey] = {paramname: v}
+                else:
+                    out[dctkey][paramname] = v
+            else:
+                out[k] = v
+
+        if out["wdm_mass"] > 0:
+            cls = wdm.HaloModelWDM
+        else:
+            # Remove all WDM stuff
+            # TODO: probably a better way about this.
+            cls = TracerHaloModel
+            del out["wdm_mass"]
+            del out["wdm_model"]
+            del out["wdm_params"]
+            del out["alter_model"]
+
+            # have to check because it won't be there if alter_model is None
+            if "alter_params" in out:
+                del out["alter_params"]
+
+        return cls, out
 
 
 class PlotChoice(forms.Form):

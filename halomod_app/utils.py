@@ -21,10 +21,7 @@ def hmf_driver(cls=TracerHaloModel, previous: [None, TracerHaloModel] = None, **
     elif "wdm_model" not in kwargs and isinstance(previous, HaloModelWDM):
         return TracerHaloModel(**kwargs)
     else:
-        #        print("PREVIOUS: ", list(previous._TracerHaloModel__recalc_prop_par.keys()))
-        #        print("KWARGS: ", kwargs)
         this = previous.clone(**kwargs)
-        #        print("THIS: ", list(this._TracerHaloModel__recalc_prop_par.keys()))
 
         # TODO: this is a hack, and should be fixed in hmf
         # we have to set all _params whose model has been changed to {}
@@ -33,7 +30,7 @@ def hmf_driver(cls=TracerHaloModel, previous: [None, TracerHaloModel] = None, **
             if k.endswith("model") and v != getattr(this, k).__class__.__name__:
                 this.update(**{k.replace("model", "params"): {}})
 
-    return this
+        return this
 
 
 def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):

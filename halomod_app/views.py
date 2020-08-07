@@ -52,99 +52,23 @@ class help(BaseTab):
 
 
 class CalculatorInputBase(FormView):
-    """
-    The form for input.
-    """
+    """The form for input."""
 
     # Define the needed variables for FormView class
     form_class = forms.FrameworkInput
     success_url = "/halomod/"
     template_name = "calculator_form.html"
 
-    def cleaned_data_to_framework_dict(self, form):
-        # get all the _params out
-        frmwrk_dict = {}
-        for k, v in form.cleaned_data.items():
-            # label is not a halo model argument
-            if k == "label":
-                continue
-            elif k == "lnk_range":
-                frmwrk_dict["lnk_min"] = v[0]
-                frmwrk_dict["lnk_max"] = v[1]
-                continue
-            elif k == "logm_range":
-                frmwrk_dict["Mmin"] = v[0]
-                frmwrk_dict["Mmax"] = v[1]
-                continue
-            elif k == "log_r_range":
-                frmwrk_dict["rmin"] = 10 ** v[0]
-                frmwrk_dict["rmax"] = 10 ** v[1]
-                continue
-            elif k == "log_k_range":
-                frmwrk_dict["hm_logk_min"] = v[0]
-                frmwrk_dict["hm_logk_max"] = v[1]
-                continue
-
-            component = getattr(form.fields[k], "component", None)
-
-            if component:
-                form_model = form.cleaned_data[component + "_model"]
-                # the model could be empty if component is, say, cosmo
-                model = getattr(form.fields[k], "model", form_model)
-
-                # Ignore params that don't belong to the chosen model
-                if model != form_model:
-                    continue
-
-                dctkey = component + "_params"
-                paramname = form.fields[k].paramname
-
-                if dctkey not in frmwrk_dict:
-                    frmwrk_dict[dctkey] = {paramname: v}
-                else:
-                    frmwrk_dict[dctkey][paramname] = v
-            else:
-                frmwrk_dict[k] = v
-
-        if frmwrk_dict["wdm_mass"] > 0:
-            cls = wdm.HaloModelWDM
-        else:
-            # Remove all WDM stuff
-            # TODO: probably a better way about this.
-            cls = TracerHaloModel
-            del frmwrk_dict["wdm_mass"]
-            del frmwrk_dict["wdm_model"]
-            del frmwrk_dict["wdm_params"]
-            del frmwrk_dict["alter_model"]
-
-            # have to check because it won't be there if alter_model is None
-            if "alter_params" in frmwrk_dict:
-                del frmwrk_dict["alter_params"]
-
-        return cls, frmwrk_dict
-
-    # Define what to do if the form is valid.
     def form_valid(self, form):
-
+        """Define what to do if the form is valid."""
         label = form.cleaned_data["label"]
-
-        cls, hmf_dict = self.cleaned_data_to_framework_dict(form)
-        logger.info("Constructed hmf_dct: %s", hmf_dict)
-
-        previous = self.kwargs.get("label", None)
-
-        if previous and previous in self.request.session["objects"]:
-            previous = self.request.session["objects"].get(previous)
-
-        # Calculate all objects
-        obj = utils.hmf_driver(previous=previous, cls=cls, **hmf_dict)
 
         if "objects" not in self.request.session:
             self.request.session["objects"] = OrderedDict()
         if "forms" not in self.request.session:
             self.request.session["forms"] = OrderedDict()
 
-        self.request.session["objects"].update({label: obj})
+        self.request.session["objects"].update({label: form.halomod_obj})
         self.request.session["forms"].update({label: form.data})
 
         return super().form_valid(form)
@@ -156,10 +80,6 @@ class CalculatorInputCreate(CalculatorInputBase):
         prev_label = self.kwargs.get("label", None)
 
         forms = self.request.session.get("forms", None)
-
-        if prev_label:
-            print("PREVIOUS FORM:")
-            print(forms.get(prev_label, None))
 
         kwargs.update(
             current_models=self.request.session.get("objects", None),
