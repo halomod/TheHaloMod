@@ -24,7 +24,7 @@ RUN python -m pip install -r requirements.txt
 RUN bash -c 'python -m pip freeze'
 
 COPY . ./
-RUN ls /app
+RUN ls -la /app
 
 # RUN mkdir -p /vol/web/media
 # RUN mkdir -p /vol/web/static
@@ -32,9 +32,8 @@ RUN ls /app
 RUN mkdir /webhost
 
 RUN adduser --disabled-password --gecos "" user
-RUN chmod +x entrypoint.sh
-# RUN chown user:user entrypoint.sh
+RUN chmod +x entrypoint
 
 USER user
 
-CMD ["sh", "entrypoint.sh"]
+CMD ["sh", "-c", "/app/entrypoint ${PORT}"]

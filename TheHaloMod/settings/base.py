@@ -15,11 +15,11 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 env = environ.Env()
 
-DOT_ENV_FILE = env("ENV_FILE", default=".envs/production")
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
-if READ_DOT_ENV_FILE:
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(ROOT_DIR / DOT_ENV_FILE))
+DOT_ENV_FILE = env("DOT_ENV_FILE", default="production")
+
+# Read a base env file, then overwrite with env-specific variables
+env.read_env(str(ROOT_DIR / ".envs" / "base"))
+env.read_env(str(ROOT_DIR / ".envs" / DOT_ENV_FILE))
 
 DEBUG = env.bool("DJANGO_DEBUG", False)
 TEMPLATE_DEBUG = DEBUG
@@ -223,18 +223,6 @@ X_FRAME_OPTIONS = "DENY"
 # ===============================================================================
 # EMAIL SETUP
 # ===============================================================================
-HOST_EMAIL = env("HOST_EMAIL", default="!!! SET HOST_EMAIL !!!")
-
-# Whether to use a TLS (secure) connection when talking to the SMTP server.
-EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = HOST_EMAIL
-SERVER_EMAIL = HOST_EMAIL
-DEFAULT_FROM_EMAIL = SERVER_EMAIL
-EMAIL_PORT = env.int("EMAIL_PORT", default=587)
-
-MY_EMAIL = env("MY_EMAIL")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-ADMINS = (("Steven", MY_EMAIL),)
-MANAGERS = ADMINS
-CONTACT_RECIPIENTS = MY_EMAIL
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+)

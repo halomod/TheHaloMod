@@ -3,7 +3,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 from .base import *  # noqa
-from .base import env, LOGGING, HOST_EMAIL
+from .base import env, LOGGING
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -74,6 +74,22 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+HOST_EMAIL = env("HOST_EMAIL")
+
+# Whether to use a TLS (secure) connection when talking to the SMTP server.
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = HOST_EMAIL
+SERVER_EMAIL = HOST_EMAIL
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+
+MY_EMAIL = env("MY_EMAIL")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+ADMINS = (("Steven", MY_EMAIL),)
+MANAGERS = ADMINS
+CONTACT_RECIPIENTS = MY_EMAIL
+
 DEFAULT_FROM_EMAIL = env(
     "DJANGO_DEFAULT_FROM_EMAIL", default=f"TheHaloMod <{HOST_EMAIL}>"
 )

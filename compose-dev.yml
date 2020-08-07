@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    env_file:
+      - env/local
+    ports:
+      - "8000:8000"
+    image: thehalomod_local_django
+    container_name: django

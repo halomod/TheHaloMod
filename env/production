@@ -1,0 +1,4 @@
+PORT=8000
+DJANGO_DEBUG=0
+DOT_ENV_FILE=production
+DJANGO_SETTINGS_MODULE=TheHaloMod.settings.production

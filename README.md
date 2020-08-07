@@ -52,26 +52,44 @@ HMF are given.
 
 To set up locally, you should install `poetry`, then run `poetry install` in the
 top-level directory. This will install all dependencies.
-Also run `export DJANGO_SETTINGS_MODULE=TheHaloMod.settings.local` and `export DOT_ENV_FILE=.env/local`.
+To add another dependency, run `poetry add <dep>` then make sure you do
+`poetry export -f requirements.txt -o requirements.txt` and commit the output file.
 
-Then, run
-`poetry run python manage.py runserver` to run the dev server.
+To run the dev server, you should simply have to do  `docker-compose -f compose-dev.yml up --build`.
+This should open a browser at the correct address.
 
+There are `.envs/base` and `.envs/local` files that are read, and do _not_ contain any
+sensitive information (in production, there are other files here that do have sensitive
+info, and are not stored in VCS). You may modify these if need be.
 
 ## Deployment
 
 I'm gonna use this space to remind _myself_ how I go about deployment for `TheHaloMod`.
-For local dev, just use the above instructions. To deploy, commit to github and merge
-to master. Then, on the server itself, go to the repo, pull, then run
-`DOT_ENV_FILE=.envs/test DJANGO_SETTINGS_MODULE=TheHaloMod.settings.test docker-compose up --build`
-to start the test webapp. After making sure that it's running OK, run
-`DOT_ENV_FILE=.envs/production DJANGO_SETTINGS_MODULE=TheHaloMod.settings.production docker-compose up --build`
-to make the update the production app.
+For local dev, just use the above instructions.
 
-Secret settings are set in the `.env/` directory, and not kept in VCS for obvious reasons.
+To deploy:
+
+1. Make a branch
+2. Make some changes
+3. Commit
+4. Push to github
+5. Ensure everything's working, then merge to master
+6. Log in to the server (`galileo.sese.asu.edu`)
+7. Do a git pull in the repo
+8. Run `ENV=env/test PORT=8010 docker-compose -f compose-prod.yml up --build` to
+   build the test server.
+9. (Manually!) go to the test server and make sure things are OK.
+10. Run `ENV=env/production PORT=8000 docker-compose -f compose-prod.yml up --build` to
+    build the production server.
+
+Secret settings are set in the `.envs/` directory, and not kept in VCS for obvious reasons.
 This `.env/` directory _is_ in the repo on the server itself, and my local copy on my
 own computer. In order to keep it safe, it's also backed up. The different compose files
-essentially just take different `.env/` files in, and set a couple of different env
+essentially just take different `.envs/` files in, and set a couple of different env
 variables.
 
-Locally,
+Some things to do if the actual server has to be changed:
+
+1. Fix up the references to SSL certificates in `nginx/default.conf`
+2. Need to copy the local versions of `.envs/test` and `.envs/production` onto the
+   server.
