@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 def hmf_driver(cls=TracerHaloModel, previous: [None, TracerHaloModel] = None, **kwargs):
+    # TODO: obviously remove
+    1 / 0
+
     if previous is None:
         return cls(**kwargs)
     elif "wdm_model" in kwargs and not isinstance(previous, HaloModelWDM):
