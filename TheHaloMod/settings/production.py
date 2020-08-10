@@ -147,3 +147,4 @@ GOOGLE_ANALYTICS_PROPERTY_ID = env("GOOGLE_ANALYTICS_PROPERTY_ID")
 
 
 STATIC_ROOT = "/vol/web/static/"
+MEDIA_ROOT = "/vol/web/media/"

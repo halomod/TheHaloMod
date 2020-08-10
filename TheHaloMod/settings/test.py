@@ -42,3 +42,4 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 STATIC_ROOT = "/vol/web/static/"
+MEDIA_ROOT = "/vol/web/media/"
