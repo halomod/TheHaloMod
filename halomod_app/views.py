@@ -119,6 +119,16 @@ class CalculatorInputEdit(CalculatorInputCreate):
                 if self.kwargs["label"] != "default":
                     raise
 
+            try:
+                self.request.session["forms"][form.cleaned_data["label"]].update(
+                    self.request.session["forms"][self.kwargs["label"]]
+                )
+            except KeyError:
+                # Special-case the original 'default', since it doesn't exist as a form
+                # at first.
+                if self.kwargs["label"] != "default":
+                    raise
+
         return result
 
 
@@ -156,15 +166,23 @@ class ViewPlots(BaseTab):
 
             request.session["objects"] = OrderedDict(default=default_obj)
             request.session["forms"] = OrderedDict()
+            request.session["model_errors"] = OrderedDict()
 
         self.form = forms.PlotChoice(request)
 
-        print("IN ViewPlots:", list(request.session["forms"].keys()))
         self.warnings = ""  # request.session['warnings']
+
+        model_errors = {
+            k: "\n".join(list(str(vv) for vv in v.keys()))
+            for k, v in request.session["model_errors"].items()
+        }
+
+        print("MODEL ERRORS: ", model_errors)
         return self.render_to_response(
             self.get_context_data(
                 form=self.form,
                 warnings=self.warnings,
+                model_errors=model_errors,
                 objects=request.session["objects"],
             )
         )
@@ -205,7 +223,7 @@ def plots(request, filetype, plottype):
     if filetype not in ["png", "svg", "pdf", "zip"]:
         raise ValueError(f"{filetype} is not a valid plot filetype")
 
-    figure_buf = utils.create_canvas(
+    figure_buf, errors = utils.create_canvas(
         objects, plottype, keymap[plottype], plot_format=filetype
     )
 
@@ -219,6 +237,17 @@ def plots(request, filetype, plottype):
         response["Content-Disposition"] = "attachment;filename=" + plottype + ".pdf"
     elif filetype == "zip":
         response = io.StringIO()
+
+    for k, v in errors.items():
+        if k not in request.session["model_errors"]:
+            request.session["model_errors"][k] = {v: [plottype]}
+        else:
+            if v not in request.session["model_errors"][k]:
+                request.session["model_errors"][k][v] = {
+                    plottype,
+                }
+            else:
+                request.session["model_errors"][k][v].add(plottype)
 
     return response
 

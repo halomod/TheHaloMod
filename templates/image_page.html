@@ -38,6 +38,14 @@
             </div>
         </div>
 
+    <!--                                         <svg class="bi bi-alert-triangle text-danger"
+                                             width="32"
+                                             height="32"
+                                             viewBox="0 0 20 20"
+                                             fill="currentColor"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                        </svg>
+                                        -->
 
         <!-- Model Table -->
         <div class="row" id="model_table_row">
@@ -47,6 +55,20 @@
                     {% for object in objects.keys %}
                         <tr id="{{ object }}-table-row">
                             <th scope="row"> {{ object }}</th>
+                            <td id="{{ object }}-table-errors">
+                                {% for model_name, errors in model_errors.items %}
+                                    {% if model_name == object %}
+                                    <span style="color: red">
+                                        <a tabindex="0"
+                                           role="button" data-toggle="popover"
+                                           data-trigger="focus", title="Errors for this model"
+                                           data-content="{{ errors }}">
+                                           <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                             <td id="{{ object }}-table-edit">
                                 <a href="edit/{{ object }}/">
                                     <i class="far fa-edit"></i>
@@ -58,9 +80,11 @@
                                 </a>
                             </td>
                             <td id="{{ object }}-table-create">
-                                <a href="create/{{ object }}/">
-                                    <i class="far fa-plus-square"></i>
-                                </a>
+                                <span style="color: darkgreen">
+                                    <a href="create/{{ object }}/" style="color: green">
+                                        <i class="far fa-plus-square"></i>
+                                    </a>
+                                </span>
                             </td>
                         </tr>
                     {% endfor %}

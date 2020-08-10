@@ -54,25 +54,35 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         if KEYMAP[q]["xlab"] == label:
             break
     else:
-        raise ValueError("This quantity is not found in KEYMAP")
+        raise ValueError(f"The quantity {q} is not found in KEYMAP")
 
+    errors = {}
     for i, (l, o) in enumerate(objects.items()):
         if not compare:
-            y = getattr(o, q)
-            if y is not None:
-                ax.plot(
-                    getattr(o, x),
-                    y,
-                    color=f"C{i % 7}",
-                    linestyle=lines[(i // 7) % 4],
-                    label=l,
-                )
+            try:
+                y = getattr(o, q)
+                if y is not None:
+                    ax.plot(
+                        getattr(o, x),
+                        y,
+                        color=f"C{i % 7}",
+                        linestyle=lines[(i // 7) % 4],
+                        label=l,
+                    )
+            except Exception as e:
+                logger.exception(f"Error encountered getting {q} for model called {l}.")
+                errors[l] = e
         else:
             if i == 0:
                 comp_obj = o
                 continue
 
-            ynum = getattr(o, q)
+            try:
+                ynum = getattr(o, q)
+            except Exception as e:
+                logger.exception(f"Error encountered getting {q} for model called {l}.")
+                errors[l] = e
+
             yden = getattr(comp_obj, q)
 
             if ynum is not None and yden is not None:
@@ -86,31 +96,35 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
                     label=l,
                 )
 
-    # Shrink current axis by 30%
-    ax.set_xscale("log")
+    try:
+        # Shrink current axis by 30%
+        ax.set_xscale("log")
 
-    ax.set_yscale(d["yscale"], basey=d.get("basey", 10))
-    if d["yscale"] == "log" and d.get("basey", 10) == 2:
-        ax.yaxis.set_major_formatter(tick.ScalarFormatter())
+        ax.set_yscale(d["yscale"], basey=d.get("basey", 10))
+        if d["yscale"] == "log" and d.get("basey", 10) == 2:
+            ax.yaxis.set_major_formatter(tick.ScalarFormatter())
 
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.6, box.height])
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.6, box.height])
 
-    # Put a legend to the right of the current axis
-    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=15)
+        # Put a legend to the right of the current axis
+        ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=15)
 
-    buf = io.BytesIO()
+        buf = io.BytesIO()
 
-    if plot_format == "pdf":
-        FigureCanvasPdf(fig).print_pdf(buf)
-    elif plot_format == "png":
-        FigureCanvasAgg(fig).print_png(buf)
-    elif plot_format == "svg":
-        FigureCanvasSVG(fig).print_svg(buf)
-    else:
-        raise ValueError("plot_format should be png, pdf or svg!")
+        if plot_format == "pdf":
+            FigureCanvasPdf(fig).print_pdf(buf)
+        elif plot_format == "png":
+            FigureCanvasAgg(fig).print_png(buf)
+        elif plot_format == "svg":
+            FigureCanvasSVG(fig).print_svg(buf)
+        else:
+            raise ValueError("plot_format should be png, pdf or svg!")
+    except Exception:
+        logger.exception("Something went wrong in creating the image itself")
+        raise
 
-    return buf
+    return buf, errors
 
 
 MLABEL = r"Mass $(M_{\odot}h^{-1})$"

@@ -151,4 +151,7 @@ $(function () {
             $('a#plot_download').attr('href', newlink);
         }
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover();
 });
