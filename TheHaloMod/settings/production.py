@@ -144,3 +144,6 @@ sentry_logging = LoggingIntegration(
 sentry_sdk.init(dsn=SENTRY_DSN, integrations=[sentry_logging, DjangoIntegration()])
 
 GOOGLE_ANALYTICS_PROPERTY_ID = env("GOOGLE_ANALYTICS_PROPERTY_ID")
+
+
+STATIC_ROOT = "/opt/thehalomod/static/"
