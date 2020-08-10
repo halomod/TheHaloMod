@@ -32,9 +32,9 @@ RUN mkdir /webhost
 RUN adduser --disabled-password --gecos "" user
 
 RUN chown -R user: /vol/web/static
-RUN chmod +r /vol/web/static
+RUN chmod +x /vol/web/static
 RUN chown -R user: /vol/web/media
-RUN chmod +r /vol/web/media
+RUN chmod +x /vol/web/media
 
 COPY . ./
 RUN ls -la /app
