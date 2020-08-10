@@ -30,3 +30,6 @@ services:
 networks:
   nginx_network:
     driver: bridge
+
+volumes:
+  static_volume:
