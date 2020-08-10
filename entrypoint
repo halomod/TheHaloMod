@@ -5,9 +5,7 @@ set -o pipefail
 set -o nounset
 
 python manage.py migrate
-python manage.py collectstatic --noinput
-
-ls -lah /vol/web/static/halomod_app/js
+# python manage.py collectstatic --no-input
 
 if [ "$DJANGO_DEBUG" -eq  "1" ]
 then

@@ -25,6 +25,7 @@ django-environ = "^0.4.5"
 django-debug-toolbar = "^2.2"
 django-extensions = "^3.0.4"
 werkzeug = "^1.0.1"
+whitenoise = "^5.2.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.5.1"
