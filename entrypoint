@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 
 python manage.py migrate
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 ls -lah /vol/web/static/halomod_app/js
 
