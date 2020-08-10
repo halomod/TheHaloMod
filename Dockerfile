@@ -29,14 +29,19 @@ RUN mkdir -p /vol/web/static
 
 RUN mkdir /webhost
 
-RUN adduser --disabled-password --gecos "" user
+RUN addgroup --system django \
+    && adduser --system --ingroup django django
 
-COPY . ./
+COPY --chown=django:django . ./
 RUN ls -la /app
 
 RUN chmod +x entrypoint
-RUN chown -R user: /app/static
+RUN mkdir /app/static
+RUN chown django:django /app/static
+RUN mkdir /app/media
+RUN chown django:django /app/media
+RUN ls -lah /app
 
-USER user
+USER django
 
 CMD ["sh", "-c", "/app/entrypoint ${PORT}"]

@@ -4,8 +4,6 @@ services:
   app:
     build:
       context: .
-    volumes:
-      - .:/app
     env_file:
       - '${ENV}'
     networks:
