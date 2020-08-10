@@ -238,6 +238,9 @@ def plots(request, filetype, plottype):
     elif filetype == "zip":
         response = io.StringIO()
 
+    print("ERRORS: ", errors)
+    print("CURRENT ERRORS: ", request.session["model_errors"])
+
     for k, v in errors.items():
         if k not in request.session["model_errors"]:
             request.session["model_errors"][k] = {v: [plottype]}
