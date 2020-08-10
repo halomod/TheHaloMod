@@ -27,12 +27,14 @@ COPY . ./
 RUN ls -la /app
 
 # RUN mkdir -p /vol/web/media
-# RUN mkdir -p /vol/web/static
+RUN mkdir -p /vol/web/static
 
 RUN mkdir /webhost
 
 RUN adduser --disabled-password --gecos "" user
 RUN chmod +x entrypoint
+RUN chown user:user /vol/web/static
+RUN chmod +r /vol/web/static
 
 USER user
 
