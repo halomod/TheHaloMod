@@ -3,7 +3,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 from .base import *  # noqa
-from .base import env, LOGGING
+from .base import env, LOGGING, ROOT_DIR
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -146,5 +146,5 @@ sentry_sdk.init(dsn=SENTRY_DSN, integrations=[sentry_logging, DjangoIntegration(
 GOOGLE_ANALYTICS_PROPERTY_ID = env("GOOGLE_ANALYTICS_PROPERTY_ID")
 
 
-STATIC_ROOT = "/vol/web/static/"
-MEDIA_ROOT = "/vol/web/media/"
+STATIC_ROOT = str(ROOT_DIR / "static")
+MEDIA_ROOT = str(ROOT_DIR / "media")

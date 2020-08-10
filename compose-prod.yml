@@ -6,6 +6,7 @@ services:
       context: .
     volumes:
       - .:/app
+      - static_volume:/app/static
     env_file:
       - '${ENV}'
     networks:
@@ -20,6 +21,7 @@ services:
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - /home/locoadmin/webhost/:/webhost
+      - static_volume:/app/static
     depends_on:
       - app
     networks:
