@@ -35,6 +35,7 @@ COPY . ./
 RUN ls -la /app
 
 RUN chmod +x entrypoint
+RUN chown -R user: /app/static
 
 USER user
 
