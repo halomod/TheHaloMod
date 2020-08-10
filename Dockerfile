@@ -23,8 +23,6 @@ RUN python -m pip install wheel
 RUN python -m pip install -r requirements.txt
 RUN bash -c 'python -m pip freeze'
 
-COPY . ./
-RUN ls -la /app
 
 RUN mkdir -p /vol/web/media
 RUN mkdir -p /vol/web/static
@@ -37,6 +35,9 @@ RUN chown user:user /vol/web/static
 RUN chmod +r /vol/web/static
 RUN chown user:user /vol/web/media
 RUN chmod +r /vol/web/media
+
+COPY . ./
+RUN ls -la /app
 
 USER user
 

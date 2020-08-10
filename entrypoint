@@ -7,7 +7,7 @@ set -o nounset
 python manage.py migrate
 python manage.py collectstatic
 
-ls /vol/web/static
+ls /vol/web/static/halomod_app/js
 
 if [ "$DJANGO_DEBUG" -eq  "1" ]
 then
