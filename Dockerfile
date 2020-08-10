@@ -18,8 +18,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN bash -c 'echo $(which python)'
 
-COPY requirements.txt ./
 RUN python -m pip install wheel
+COPY requirements.txt ./
 RUN python -m pip install -r requirements.txt
 RUN bash -c 'python -m pip freeze'
 

@@ -146,5 +146,5 @@ sentry_sdk.init(dsn=SENTRY_DSN, integrations=[sentry_logging, DjangoIntegration(
 GOOGLE_ANALYTICS_PROPERTY_ID = env("GOOGLE_ANALYTICS_PROPERTY_ID")
 
 
-# STATIC_ROOT = str(ROOT_DIR / "static")
-# MEDIA_ROOT = str(ROOT_DIR / "media")
+STATIC_ROOT = str(ROOT_DIR / "static")
+MEDIA_ROOT = str(ROOT_DIR / "media")
