@@ -637,7 +637,7 @@ class PlotChoice(forms.Form):
                     ("central_occupation", "Occupation of central component"),
                     ("satellite_occupation", "Occupation of satellite component"),
                     ("radii", "Radii of spherical regions"),
-                    ("tracer_concentration", "Tracer conentration-mass relation"),
+                    ("tracer_cmz_relation", "Tracer conentration-mass relation"),
                 ),
             ),
             (
