@@ -780,7 +780,7 @@ class UserErrorForm(forms.Form):
     name = forms.CharField(required=False, label_suffix="optional")
     email = forms.EmailField(required=False)
 
-    def __init__(self, objects, current_quantity, *args, **kwargs):
+    def __init__(self, objects, current_quantity, model, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Submit"))
 
@@ -797,6 +797,7 @@ class UserErrorForm(forms.Form):
             label="Models with Bugs",
             required=False,
             choices=list(zip(objects.keys(), objects.keys())),
+            initial=[model],
         )
 
         self.helper.layout = Div(

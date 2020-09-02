@@ -424,6 +424,7 @@ class UserErrorReport(FormView):
         kwargs = super().get_form_kwargs()
         kwargs["objects"] = self.request.session.get("objects", {})
         kwargs["current_quantity"] = self.request.session.get("current_plot", None)
+        kwargs["model"] = self.kwargs.get("model", None)
         return kwargs
 
     def form_valid(self, form):
@@ -436,16 +437,16 @@ class UserErrorReport(FormView):
 
         message = f"{name} / {email} said: \n\n{message}"
 
-        #        for model in form.cleaned_data.get("models"):
         message += (
             f"\n\nModels Considered Bad: {'; '.join(form.cleaned_data.get('models'))}"
         )
-        message += f"\nQuantities Considered Bad: {'; '.join(form.cleaned_data.get('quantities'))}"
-        message += "\n\nMODELS:"
+        message += f"\nQuantities Considered Bad: {'; '.join(form.cleaned_data.get('quantity'))}"
+        message += "\n\nMODELS:\n\n"
 
-        for obj, label in self.request.session["objects"].items():
+        for label, obj in self.request.session["objects"].items():
             message += f"{label}\n{'-'*len(label)}\n"
             message += toml.dumps(framework_to_dict(obj))
+            message += "\n\n"
 
         logger.error(message)
         return super().form_valid(form)

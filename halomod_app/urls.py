@@ -39,4 +39,7 @@ urlpatterns = [
     path("email-sent/", views.EmailSuccess.as_view(), name="email-success"),
     path("halomod/download/halogen.zip", views.halogen, name="halogen-output"),
     path("halomod/report/", views.UserErrorReport.as_view(), name="report_model"),
+    path(
+        "halomod/report/<model>/", views.UserErrorReport.as_view(), name="report_model"
+    ),
 ]
