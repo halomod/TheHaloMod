@@ -41,7 +41,7 @@ RUN chown django:django /app/static
 RUN mkdir -p /app/media
 RUN chown django:django /app/media
 RUN ls -lah /app
-
+RUN chown django:django /app/db
 USER django
 
 CMD ["sh", "-c", "/app/entrypoint ${PORT}"]
