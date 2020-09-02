@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}TheHaloMod | Report Bug {% endblock %}
+
+
+{% block allcontent %}
+    <div class="container">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+            <h3 class="display-3">Thanks for the report!</h3>
+            <p class="lead">
+                If your issue is a general request, please file a
+                <a href="https://github.com/thehalomod/issues/new">Github Issue</a> instead.
+                Otherwise, if you have noticed a bug in a particular model, please comment on it
+                below and let us know. Leave your <span class="font-italic text-info">name</span>
+                and <span class="font-italic text-info">email</span> if you'd like us to get back to
+                you about the issue. Thanks again for helping us out!
+            </p>
+                </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-8">
+                {% crispy form %}
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+    </div>
+{% endblock %}

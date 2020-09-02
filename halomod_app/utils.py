@@ -100,7 +100,7 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         # Shrink current axis by 30%
         ax.set_xscale("log")
 
-        ax.set_yscale(d["yscale"], basey=d.get("basey", 10))
+        ax.set_yscale(d["yscale"], base=d.get("basey", 10))
         if d["yscale"] == "log" and d.get("basey", 10) == 2:
             ax.yaxis.set_major_formatter(tick.ScalarFormatter())
 

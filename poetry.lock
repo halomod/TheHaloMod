@@ -140,6 +140,17 @@ version = "2.6.0"
 
 [[package]]
 category = "main"
+description = "A Django plugin for creating AJAX driven forms in Bootstrap modal."
+name = "django-bootstrap-modal-forms"
+optional = false
+python-versions = "*"
+version = "2.0.0"
+
+[package.dependencies]
+Django = ">=1.8"
+
+[[package]]
+category = "main"
 description = "Best way to have Django DRY forms"
 name = "django-crispy-forms"
 optional = false
@@ -568,7 +579,7 @@ version = "5.2.0"
 brotli = ["brotli"]
 
 [metadata]
-content-hash = "d834f530b26d485cb69bcfb9883052c6eb2e50e1e8129a666b963e3c267c3a35"
+content-hash = "e79747f2bba12970e90905dea42df1e6af3b81844260e29b9227a1e7fb8e8a1b"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -637,6 +648,9 @@ django = [
 django-analytical = [
     {file = "django-analytical-2.6.0.tar.gz", hash = "sha256:6ccda72996f72902902ec38183613c6c02093bc1046dc75831f0f014a663549f"},
     {file = "django_analytical-2.6.0-py3-none-any.whl", hash = "sha256:07d6907cee47e2acafaa1332d250c8f01b8f45375cd576ca1bb0d8095f92f227"},
+]
+django-bootstrap-modal-forms = [
+    {file = "django-bootstrap-modal-forms-2.0.0.tar.gz", hash = "sha256:0d64e545fc2dd1f9e2550c89074789ce6a8197675596cb295c2574ae0b9ed078"},
 ]
 django-crispy-forms = [
     {file = "django-crispy-forms-1.9.2.tar.gz", hash = "sha256:f2f1e0fbb458851636447cfb6be1a611b40c8ac9e41a74ba923011378670b43b"},

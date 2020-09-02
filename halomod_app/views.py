@@ -173,11 +173,10 @@ class ViewPlots(BaseTab):
         self.warnings = ""  # request.session['warnings']
 
         model_errors = {
-            k: "\n".join(list(str(vv) for vv in v.keys()))
+            k: "\n".join([str(vv) for vv in v.keys()])
             for k, v in request.session["model_errors"].items()
         }
 
-        print("MODEL ERRORS: ", model_errors)
         return self.render_to_response(
             self.get_context_data(
                 form=self.form,
@@ -222,6 +221,11 @@ def plots(request, filetype, plottype):
 
     if filetype not in ["png", "svg", "pdf", "zip"]:
         raise ValueError(f"{filetype} is not a valid plot filetype")
+
+    # Save the current plottype to the session for use elsewhere
+    if filetype == "svg":
+        # only save it when svg, which is what actually shows.
+        request.session["current_plot"] = plottype
 
     figure_buf, errors = utils.create_canvas(
         objects, plottype, keymap[plottype], plot_format=filetype
@@ -415,3 +419,28 @@ def get_code(request, name):
 
         response["Content-Disposition"] = "attachment;filename=" + name
         return response
+
+
+class UserErrorReport(FormView):
+    form_class = forms.UserErrorForm
+    template_name = "user_error_form.html"
+    success_url = "/email-sent/"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["objects"] = self.request.session.get("objects", {})
+        kwargs["current_quantity"] = self.request.session.get("current_plot", None)
+        return kwargs
+
+    def form_valid(self, form):
+        name = form.cleaned_data.get("name")
+        email = form.cleaned_data.get("email")
+        message = form.cleaned_data.get("message")
+
+        name = name or "anonymous"
+        email = email or "anonymous"
+
+        message = f"{name} / {email} said: \n\n{message}"
+
+        logger.error(message)
+        return super().form_valid(form)

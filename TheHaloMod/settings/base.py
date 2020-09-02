@@ -3,7 +3,6 @@
 # ===============================================================================
 # THIRD_PARTY IMPORTS
 # ===============================================================================
-import os
 import dill
 from django.contrib.sessions import serializers
 from django.core.cache.backends import locmem
@@ -56,6 +55,7 @@ INSTALLED_APPS = [
     "analytical",
     "crispy_forms",
     "halomod_app",
+    "bootstrap_modal_forms",
 ]
 
 # ===============================================================================
@@ -151,6 +151,9 @@ MEDIA_URL = "/media/"
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = "/static/"
+
+STATIC_ROOT = str(ROOT_DIR / "static")
+MEDIA_ROOT = str(ROOT_DIR / "media")
 
 # List of finder classes that know how to find static files in
 # various locations.

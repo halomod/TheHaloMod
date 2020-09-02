@@ -36,9 +36,9 @@ COPY --chown=django:django . ./
 RUN ls -la /app
 
 RUN chmod +x entrypoint
-RUN mkdir /app/static
+RUN mkdir -p /app/static
 RUN chown django:django /app/static
-RUN mkdir /app/media
+RUN mkdir -p /app/media
 RUN chown django:django /app/media
 RUN ls -lah /app
 

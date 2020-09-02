@@ -41,6 +41,8 @@ django==3.0.8 \
 django-analytical==2.6.0 \
     --hash=sha256:6ccda72996f72902902ec38183613c6c02093bc1046dc75831f0f014a663549f \
     --hash=sha256:07d6907cee47e2acafaa1332d250c8f01b8f45375cd576ca1bb0d8095f92f227
+django-bootstrap-modal-forms==2.0.0 \
+    --hash=sha256:0d64e545fc2dd1f9e2550c89074789ce6a8197675596cb295c2574ae0b9ed078
 django-crispy-forms==1.9.2 \
     --hash=sha256:f2f1e0fbb458851636447cfb6be1a611b40c8ac9e41a74ba923011378670b43b \
     --hash=sha256:888bb316db89b60050a42ec35080facb361d823eec38010ccb0702f45642d3b8

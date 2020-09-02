@@ -6,7 +6,7 @@ import hmf
 import numpy as np
 from crispy_forms.bootstrap import TabHolder
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Div, HTML
+from crispy_forms.layout import Layout, Submit, Div, HTML, Field
 from django import forms
 from django.utils.safestring import mark_safe
 from hmf import growth_factor, transfer_models, fitting_functions, filters, wdm
@@ -25,6 +25,7 @@ from halomod import hod
 from halomod import wdm as hm_wdm
 from halomod import TracerHaloModel
 from . import utils
+from copy import copy
 
 logger = logging.getLogger(__name__)
 
@@ -589,6 +590,113 @@ class FrameworkInput(CompositeForm):
 
 
 class PlotChoice(forms.Form):
+    plot_choices = [
+        (
+            "Mass Function",
+            (
+                ("dndm", "dn/dm"),
+                ("dndlnm", "dn/dln(m)"),
+                ("dndlog10m", "dn/dlog10(m)"),
+                ("fsigma", mark_safe("f(&#963)")),
+                ("sigma", mark_safe("&#963 (mass variance)")),
+                ("lnsigma", mark_safe("ln(1/&#963)")),
+                ("n_eff", "Effective Spectral Index"),
+                ("ngtm", "n(>m)"),
+                ("rho_ltm", mark_safe("&#961(&#60m)")),
+                ("rho_gtm", mark_safe("&#961(>m)")),
+            ),
+        ),
+        (
+            "Linear Structure",
+            (
+                ("transfer_function", "Transfer Function"),
+                ("power", "Power Spectrum"),
+                ("delta_k", "Dimensionless Power Spectrum"),
+                (
+                    "nonlinear_delta_k",
+                    "Non-linear dimensionless power spectrum (HALOFIT)",
+                ),
+                ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
+                ("corr_linear_mm", "Linear matter correlation function"),
+            ),
+        ),
+        (
+            "Halos and HODs",
+            (
+                ("halo_bias", "Halo Bias"),
+                ("cmz_relation", "Halo Concentration-Mass Relation"),
+                ("total_occupation", "Tracer occupation"),
+                ("central_occupation", "Occupation of central component"),
+                ("satellite_occupation", "Occupation of satellite component"),
+                ("radii", "Radii of spherical regions"),
+                ("tracer_cmz_relation", "Tracer conentration-mass relation"),
+            ),
+        ),
+        (
+            "Halo Model Spectra",
+            (
+                # Matter power
+                ("power_auto_matter", "Matter-matter power spectrum"),
+                ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
+                ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
+                # Tracer Power
+                ("power_auto_tracer", "Tracer power spectrum"),
+                ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+                ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
+                (
+                    "power_1h_cs_auto_tracer",
+                    "1-halo central-satellite tracer power spectrum",
+                ),
+                (
+                    "power_1h_ss_auto_tracer",
+                    "1-halo satellite-satellite tracer power spectrum",
+                ),
+                # Cross Power
+                ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
+                (
+                    "power_1h_cross_tracer_matter",
+                    "1-halo tracer-matter power spectrum",
+                ),
+                (
+                    "power_2h_cross_tracer_matter",
+                    "2-halo matter-tracer power spectrum",
+                ),
+            ),
+        ),
+        (
+            "Halo Model Correlations",
+            (
+                # Matter
+                ("corr_auto_matter", "Matter-matter correlation function"),
+                ("corr_2h_auto_matter", "2-halo matter-matter correlation function",),
+                ("corr_1h_auto_matter", "1-halo matter-matter correlation function",),
+                # Tracer
+                ("corr_auto_tracer", "Tracer-tracer correlation function"),
+                ("corr_2h_auto_tracer", "2-halo tracer-tracer correlation function",),
+                ("corr_1h_auto_tracer", "1-halo tracer-tracer correlation function",),
+                (
+                    "corr_1h_cs_auto_tracer",
+                    "1-halo central-satellite tracer correlation function",
+                ),
+                (
+                    "corr_1h_ss_auto_tracer",
+                    "1-halo satellite-satellite tracer correlation function",
+                ),
+                # Cross
+                ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
+                (
+                    "corr_1h_cross_tracer_matter",
+                    "1-halo matter-tracer correlation function",
+                ),
+                (
+                    "corr_2h_cross_tracer_matter",
+                    "2-halo matter-tracer correlation function",
+                ),
+                ("sd_bias_correction", "Scale-dependent bias correction"),
+            ),
+        ),
+    ]
+
     def __init__(self, request, *args, **kwargs):
         super(PlotChoice, self).__init__(*args, **kwargs)
         # Add in extra plot choices if they are required by the form in the session.
@@ -598,125 +706,7 @@ class PlotChoice(forms.Form):
 
         objects = request.session["objects"]
 
-        plot_choices = [
-            (
-                "Mass Function",
-                (
-                    ("dndm", "dn/dm"),
-                    ("dndlnm", "dn/dln(m)"),
-                    ("dndlog10m", "dn/dlog10(m)"),
-                    ("fsigma", mark_safe("f(&#963)")),
-                    ("sigma", mark_safe("&#963 (mass variance)")),
-                    ("lnsigma", mark_safe("ln(1/&#963)")),
-                    ("n_eff", "Effective Spectral Index"),
-                    ("ngtm", "n(>m)"),
-                    ("rho_ltm", mark_safe("&#961(&#60m)")),
-                    ("rho_gtm", mark_safe("&#961(>m)")),
-                ),
-            ),
-            (
-                "Linear Structure",
-                (
-                    ("transfer_function", "Transfer Function"),
-                    ("power", "Power Spectrum"),
-                    ("delta_k", "Dimensionless Power Spectrum"),
-                    (
-                        "nonlinear_delta_k",
-                        "Non-linear dimensionless power spectrum (HALOFIT)",
-                    ),
-                    ("nonlinear_power", "Non-linear power spectrum (HALOFIT)"),
-                    ("corr_linear_mm", "Linear matter correlation function"),
-                ),
-            ),
-            (
-                "Halos and HODs",
-                (
-                    ("halo_bias", "Halo Bias"),
-                    ("cmz_relation", "Halo Concentration-Mass Relation"),
-                    ("total_occupation", "Tracer occupation"),
-                    ("central_occupation", "Occupation of central component"),
-                    ("satellite_occupation", "Occupation of satellite component"),
-                    ("radii", "Radii of spherical regions"),
-                    ("tracer_cmz_relation", "Tracer conentration-mass relation"),
-                ),
-            ),
-            (
-                "Halo Model Spectra",
-                (
-                    # Matter power
-                    ("power_auto_matter", "Matter-matter power spectrum"),
-                    ("power_2h_auto_matter", "2-halo matter-matter power spectrum"),
-                    ("power_1h_auto_matter", "1-halo matter-matter power spectrum"),
-                    # Tracer Power
-                    ("power_auto_tracer", "Tracer power spectrum"),
-                    ("power_2h_auto_tracer", "2-halo tracer-tracer power spectrum"),
-                    ("power_1h_auto_tracer", "2-halo tracer-tracer power spectrum"),
-                    (
-                        "power_1h_cs_auto_tracer",
-                        "1-halo central-satellite tracer power spectrum",
-                    ),
-                    (
-                        "power_1h_ss_auto_tracer",
-                        "1-halo satellite-satellite tracer power spectrum",
-                    ),
-                    # Cross Power
-                    ("power_cross_tracer_matter", "Matter-tracer power spectrum"),
-                    (
-                        "power_1h_cross_tracer_matter",
-                        "1-halo tracer-matter power spectrum",
-                    ),
-                    (
-                        "power_2h_cross_tracer_matter",
-                        "2-halo matter-tracer power spectrum",
-                    ),
-                ),
-            ),
-            (
-                "Halo Model Correlations",
-                (
-                    # Matter
-                    ("corr_auto_matter", "Matter-matter correlation function"),
-                    (
-                        "corr_2h_auto_matter",
-                        "2-halo matter-matter correlation function",
-                    ),
-                    (
-                        "corr_1h_auto_matter",
-                        "1-halo matter-matter correlation function",
-                    ),
-                    # Tracer
-                    ("corr_auto_tracer", "Tracer-tracer correlation function"),
-                    (
-                        "corr_2h_auto_tracer",
-                        "2-halo tracer-tracer correlation function",
-                    ),
-                    (
-                        "corr_1h_auto_tracer",
-                        "1-halo tracer-tracer correlation function",
-                    ),
-                    (
-                        "corr_1h_cs_auto_tracer",
-                        "1-halo central-satellite tracer correlation function",
-                    ),
-                    (
-                        "corr_1h_ss_auto_tracer",
-                        "1-halo satellite-satellite tracer correlation function",
-                    ),
-                    # Cross
-                    ("corr_cross_tracer_matter", "Matter-tracer correlation function"),
-                    (
-                        "corr_1h_cross_tracer_matter",
-                        "1-halo matter-tracer correlation function",
-                    ),
-                    (
-                        "corr_2h_cross_tracer_matter",
-                        "2-halo matter-tracer correlation function",
-                    ),
-                    ("sd_bias_correction", "Scale-dependent bias correction"),
-                ),
-            ),
-        ]
-
+        plot_choices = copy(self.plot_choices)
         if len(objects) > 1:
             show_comps = True
             for i, o in enumerate(objects.values()):
@@ -782,4 +772,40 @@ class ContactForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Submit"))
-        super(ContactForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+
+class UserErrorForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea)
+    name = forms.CharField(required=False, label_suffix="optional")
+    email = forms.EmailField(required=False)
+
+    def __init__(self, objects, current_quantity, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Submit"))
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["quantity"] = forms.MultipleChoiceField(
+            label="Which quantities showed the problem?",
+            choices=PlotChoice.plot_choices,
+            initial=[current_quantity],
+            required=False,
+        )
+
+        self.fields["models"] = forms.MultipleChoiceField(
+            label="Models with Bugs",
+            required=False,
+            choices=list(zip(objects.keys(), objects.keys())),
+        )
+
+        self.helper.layout = Div(
+            Div(Field("quantity")),
+            Div(Field("models")),
+            Div(Field("message")),
+            Div(
+                Div(Field("name"), css_class="mt-6 col"),
+                Div(Field("email"), css_class="mt-6 col"),
+                css_class="mt-12 row",
+            ),
+        )

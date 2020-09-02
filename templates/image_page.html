@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
+
 {% block title %}TheHaloMod | Plots {% endblock %}
 
 {% block allcontent %}
@@ -12,6 +14,8 @@
             <div class="col-5">
                 <a class="btn btn-success btn-large" href="create/">
                     <i class="fas fa-plus-square"></i> New Model</a>
+                <a class="report-model btn btn-warning btn-large" href="report/">
+                    <i class="fas fa-bug"></i> Report Bug</a>
                 <a class="btn btn-danger btn-large" href="restart/">
                     <i class="fas fa-redo-alt"></i> Restart</a>
             </div>
@@ -38,14 +42,6 @@
             </div>
         </div>
 
-    <!--                                         <svg class="bi bi-alert-triangle text-danger"
-                                             width="32"
-                                             height="32"
-                                             viewBox="0 0 20 20"
-                                             fill="currentColor"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                        </svg>
-                                        -->
 
         <!-- Model Table -->
         <div class="row" id="model_table_row">
@@ -74,17 +70,17 @@
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>
-                            <td id="{{ object }}-table-delete">
-                                <a href="delete/{{ object }}" id="{{ object }}-table-delete-button">
-                                    <i class="far fa-trash-alt"></i>
-                                </a>
-                            </td>
                             <td id="{{ object }}-table-create">
                                 <span style="color: darkgreen">
                                     <a href="create/{{ object }}/" style="color: green">
                                         <i class="far fa-plus-square"></i>
                                     </a>
                                 </span>
+                            </td>
+                            <td id="{{ object }}-table-delete">
+                                <a href="delete/{{ object }}" id="{{ object }}-table-delete-button">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}
