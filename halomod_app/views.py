@@ -32,13 +32,15 @@ class BaseTab(TabView):
     top = True
 
 
-class home(BaseTab):
+class about(BaseTab):
     """
     The home-page. Should just be simple html with links to what to do.
     """
 
-    _is_tab = False
-    template_name = "home.html"
+    _is_tab = True
+    template_name = "about.html"
+    tab_id = "/about/"
+    tab_label = "About"
 
 
 class help(BaseTab):
@@ -57,7 +59,7 @@ class CalculatorInputBase(FormView):
 
     # Define the needed variables for FormView class
     form_class = forms.FrameworkInput
-    success_url = "/halomod/"
+    success_url = "/"
     template_name = "calculator_form.html"
 
     def form_valid(self, form):
@@ -101,7 +103,7 @@ class CalculatorInputEdit(CalculatorInputCreate):
         Handles GET requests and instantiates a blank version of the form.
         """
         if kwargs.get("label", "") not in self.request.session.get("objects", {}):
-            return HttpResponseRedirect("/halomod/create/")
+            return HttpResponseRedirect("/create/")
 
         return super().get(request, *args, **kwargs)
 
@@ -146,7 +148,7 @@ def delete_plot(request, label):
         except KeyError:
             pass
 
-    return HttpResponseRedirect("/halomod/")
+    return HttpResponseRedirect("/")
 
 
 def complete_reset(request):
@@ -156,7 +158,7 @@ def complete_reset(request):
     except KeyError:
         pass
 
-    return HttpResponseRedirect("/halomod/")
+    return HttpResponseRedirect("/")
 
 
 class ViewPlots(BaseTab):
@@ -175,7 +177,7 @@ class ViewPlots(BaseTab):
 
         model_errors = {
             k: "\n".join([str(vv) for vv in v.keys()])
-            for k, v in request.session["model_errors"].items()
+            for k, v in request.session.get("model_errors", {}).items()
         }
 
         return self.render_to_response(
@@ -189,7 +191,7 @@ class ViewPlots(BaseTab):
 
     template_name = "image_page.html"
     _is_tab = True
-    tab_id = "/halomod/"
+    tab_id = "/"
     tab_label = "Calculator"
     top = True
 
@@ -218,7 +220,7 @@ def plots(request, filetype, plottype):
         },
     }
     if not objects:
-        return HttpResponseRedirect("/halomod/")
+        return HttpResponseRedirect("/")
 
     if filetype not in ["png", "svg", "pdf", "zip"]:
         raise ValueError(f"{filetype} is not a valid plot filetype")

@@ -13,7 +13,7 @@
             This page outlines the common usage of TheHaloMod, along with
             information concerning the various parameters and options included.
             Much of this information is a modified rendition of
-            <a href=http://arxiv.org/abs/1306.6721>this article</a>, which
+            <a href=http://arxiv.org/abs/1306.6721 target="_blank">this article</a>, which
             accompanied the publishing of TheHaloMod, though the backend
             has changed significantly since this publication.
             Read on for information about common usage, the transfer function
@@ -24,7 +24,7 @@
         <p>
             TheHaloMod is built to be easy to use. In the simplest example,
             the only action required on your part is to navigate to the
-            <a href="/halomod/">calculator</a> and click "Calculate".
+            <a href="{% url 'image-page' %}">calculator</a>.
             All required options and parameters are filled with
             sensible defaults and ready to go. Nevertheless, most users will
             want to fiddle with the parameters to tune them to their
@@ -72,7 +72,7 @@
         </p>
         <p>
             Models are persistent -- you can navigate to this help page and
-            back to the <a href="/halomod/">calculator</a> and your models
+            back to the <a href="{% url 'image-page' %}">calculator</a> and your models
             will remain. To restart calculations from the original default
             model and delete all the models you've created in the session,
             use the big red restart button in the calculator.

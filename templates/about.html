@@ -1,0 +1,36 @@
+{% extends "text_base.html" %}
+
+{% block subheading %}
+    <div class="col-9 page-header mx-auto pb-4">
+        <h1>TheHaloMod: the halo model calculator.</h1>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row"></div>
+    <div class="col-9 mx-auto">
+        <p class="text-justify">
+            <code>TheHaloMod</code> is an app for calculating the cosmological Halo
+            Model of Large Scale Structure,
+            written by <a href="http://loco.lab.asu.edu/steven-murray/" target="_blank">Steven Murray</a>.
+            It is intended to be used for both research and education, and I'd be very
+            happy to <a href="{% url 'contact-email' %}">hear how you're using it</a>!
+        </p>
+
+        <p>
+            The backend for this app is written in Python.
+            If you have a working python installation you can install it simply with
+            <code>pip install halomod</code>. <code>TheHaloMod</code> is powered by
+            <a href="https://www.djangoproject.com/" target="_blank">Django</a>.
+        </p>
+
+        <p>
+            <code>TheHaloMod</code> is hosted on a cluster maintained by the
+            <a href="http://loco.lab.asu.edu/" target="_blank">Low-frequency Cosmology</a> (LoCo)
+            lab at the <a href="http://sese.asu.edu target="_blank"">School of Earth and Space Exploration</a>
+            at <a href="http://asu.edu" target="_blank">ASU</a>. Shout-outs to Judd Bowman,
+            Danny Jacobs, Adam Beardsley and Matt Kolopanis for assisting greatly with
+            server setup and maintenance.
+        </p>
+{% endblock %}

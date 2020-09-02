@@ -81,7 +81,7 @@
                     {% endfor %}
 
                     <li class="nav-item">
-                        <a class='nav-link' href="https://github.com/steven-murray/TheHaloMod/issues/new">
+                        <a class='nav-link' href="https://github.com/steven-murray/TheHaloMod/issues/new" target="_blank">
                             <i class="fab fa-github"></i> Report Issue
                         </a>
                     </li>
@@ -97,7 +97,7 @@
                         <i class="fab fa-github"></i>
                     </a>&nbsp;
                       |
-                    <a href="/emailme/">
+                    <a href="{% url 'contact-email' %}">
                         <i class="fas fa-envelope"></i>
                     </a>
 
@@ -117,9 +117,10 @@
 </main>
 
 <footer class="footer mt-auto py-3 bg-dark">
-
+    <div class="col-1"></div>
+    <div class="col-10">
     <span class="pull-left text-muted">
-        &copy; Steven Murray, 2019.
+        &copy; Steven Murray, {% now 'Y' %}.
     </span>
     <span class="pull-right text-muted">
         If you find TheHaloMod or hmf or halomod useful, please cite
@@ -127,6 +128,7 @@
             Murray, Power & Robotham (2013)
         </a>
     </span>
+    </div>
 
 </footer>
 

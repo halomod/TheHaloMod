@@ -52,18 +52,21 @@ class CosmoForm(ComponentModelForm):
             initial=str(hmf.cosmo.Planck15.H0.value),
             min_value=10,
             max_value=500.0,
+            localize=True,
         ),
         Ob0=forms.FloatField(
             label=mark_safe("&#937<sub>b</sub>"),
             initial=str(hmf.cosmo.Planck15.Ob0),
             min_value=0.005,
             max_value=0.65,
+            localize=True,
         ),
         Om0=forms.FloatField(
             label=mark_safe("&#937<sub>m</sub>"),
             initial=str(hmf.cosmo.Planck15.Om0),
             min_value=0.02,
             max_value=2.0,
+            localize=True,
         ),
     )
 
@@ -126,6 +129,7 @@ class TransferFramework(FrameworkForm):
         initial=f"{DEFAULT_MODEL['sigma_8']}",
         min_value=0.1,
         help_text="RMS Mass Fluctuations (note: modified by Base Cosmology)",
+        localize=True,
     )
 
     lnk_range = RangeSliderField(
@@ -137,7 +141,11 @@ class TransferFramework(FrameworkForm):
     )
 
     dlnk = forms.FloatField(
-        label="lnk Step Size", initial=0.05, min_value=0.005, max_value=0.5,
+        label="lnk Step Size",
+        initial=0.05,
+        min_value=0.005,
+        max_value=0.5,
+        localize=True,
     )
 
     takahashi = forms.BooleanField(
@@ -201,6 +209,7 @@ class MassFunctionFramework(FrameworkForm):
         min_value=0.005,
         max_value=1,
         initial=f"{DEFAULT_MODEL['dlog10m']}",
+        localize=True,
     )
 
     delta_c = forms.FloatField(
@@ -208,6 +217,7 @@ class MassFunctionFramework(FrameworkForm):
         initial=f"{DEFAULT_MODEL['delta_c']}",
         min_value=1,
         max_value=3,
+        localize=True,
     )
 
 
@@ -246,7 +256,11 @@ class WDMForm(ComponentModelForm):
 
 class WDMFramework(FrameworkForm):
     wdm_mass = forms.FloatField(
-        label="WDM Particle Mass (keV)", initial=0, min_value=0, max_value=1000.0
+        label="WDM Particle Mass (keV)",
+        initial=0,
+        min_value=0,
+        max_value=1000.0,
+        localize=True,
     )
 
 
@@ -364,6 +378,7 @@ class TracerHaloModelFramework(FrameworkForm):
         min_value=0.01,
         max_value=1,
         initial=f"{DEFAULT_MODEL['hm_dlog10k']}",
+        localize=True,
     )
 
     hc_spectrum = forms.ChoiceField(
@@ -572,7 +587,7 @@ class FrameworkInput(CompositeForm):
                 out[k] = v
 
         if out["wdm_mass"] > 0:
-            cls = wdm.HaloModelWDM
+            cls = hm_wdm.HaloModelWDM
         else:
             # Remove all WDM stuff
             # TODO: probably a better way about this.
