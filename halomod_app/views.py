@@ -16,7 +16,8 @@ import hmf
 import halomod
 from halomod import wdm, TracerHaloModel
 from tabination.views import TabView
-
+from hmf.helpers.cfg_utils import framework_to_dict
+import toml
 from . import forms
 from . import utils
 from . import version as calc_version
@@ -257,34 +258,27 @@ def plots(request, filetype, plottype):
 
 
 def header_txt(request):
-    # Set up the response object as a text file
-    response = HttpResponse(content_type="text/plain")
-    response["Content-Disposition"] = "attachment; filename=parameters.txt"
+    # Open up file-like objects for response
+    response = HttpResponse(content_type="application/zip")
+    response["Content-Disposition"] = "attachment; filename=all_plots.zip"
+    buff = io.BytesIO()
+    archive = zipfile.ZipFile(buff, "w", zipfile.ZIP_DEFLATED)
 
     # Import all the input form data so it can be written to file
     objects = request.session["objects"]
 
-    labels = list(objects.keys())
-    objects = list(objects.values())
+    for i, (o, label) in enumerate(objects.items()):
+        s = io.BytesIO()
+        s.write(toml.dumps(framework_to_dict(o)).encode())
+        archive.writestr(f"{label}.toml", s.getvalue())
+        s.close()
 
-    # Write the parameter info
-    response.write("File Created On: " + str(datetime.datetime.now()) + "\n")
-    response.write("With version " + calc_version + " of halomod_app \n")
-    response.write("And version " + hmf.__version__ + " of hmf (backend) \n")
-    response.write("And version " + halomod.__version__ + " of halomod (backend) \n")
-
-    response.write("\n")
-    response.write("SETS OF PARAMETERS USED \n")
-
-    for i, o in enumerate(objects):
-        response.write("=====================================================\n")
-        response.write("   %s\n" % (labels[i]))
-        response.write("=====================================================\n")
-        for k, v in list(o.parameter_values.items()):
-            response.write("%s: %s \n" % (k, v))
-        response.write("\n")
-
-        return response
+    archive.close()
+    buff.flush()
+    ret_zip = buff.getvalue()
+    buff.close()
+    response.write(ret_zip)
+    return response
 
 
 def data_output(request):
@@ -441,6 +435,17 @@ class UserErrorReport(FormView):
         email = email or "anonymous"
 
         message = f"{name} / {email} said: \n\n{message}"
+
+        #        for model in form.cleaned_data.get("models"):
+        message += (
+            f"\n\nModels Considered Bad: {'; '.join(form.cleaned_data.get('models'))}"
+        )
+        message += f"\nQuantities Considered Bad: {'; '.join(form.cleaned_data.get('quantities'))}"
+        message += "\n\nMODELS:"
+
+        for obj, label in self.request.session["objects"].items():
+            message += f"{label}\n{'-'*len(label)}\n"
+            message += toml.dumps(framework_to_dict(obj))
 
         logger.error(message)
         return super().form_valid(form)
