@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         "favicon.ico",
         RedirectView.as_view(
-            url=staticfiles_storage.url("favicon.ico"), permanent=False
+            url=staticfiles_storage.url("halomod_app/img/favicon.ico"), permanent=False
         ),
         name="favicon",
     ),
