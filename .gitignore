@@ -8,4 +8,4 @@
 .envs/
 !.envs/base
 !.envs/local
-static/
+/static/
