@@ -9,6 +9,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.backends.backend_pdf import FigureCanvasPdf
 from matplotlib.backends.backend_svg import FigureCanvasSVG
 from matplotlib.figure import Figure
+import re
+
 
 logger = logging.getLogger(__name__)
 
@@ -335,3 +337,11 @@ KEYMAP = {
         "yscale": "log",
     },
 }
+
+
+def camel_to_words(word: str) -> str:
+    n = len(word)
+    word = re.sub(r"(?<!^)(?=[A-Z])", " ", word)
+    if len(word.split(" ")) == n:
+        return word.replace(" ", "")
+    return word

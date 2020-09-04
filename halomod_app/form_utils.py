@@ -12,6 +12,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 from halomod import TracerHaloModel
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -226,7 +227,7 @@ class ComponentModelForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if self.label is None:
-            self.label = self.__class__.__name__.split("Form")[0] + " Model"
+            self.label = utils.camel_to_words(self.__class__.__name__.split("Form")[0])
 
         if self.kind is None:
             self.kind = self.__class__.__name__.split("Form")[0].lower()
@@ -267,9 +268,29 @@ class ComponentModelForm(forms.Form):
             self.fields[name].component = self.kind
             self.fields[name].paramname = fieldname
 
-        # Make layout a simple Tab with a model chooser and model parameters.
-        self._layout = Tab(
+    def _process_extras(self, extra: list) -> Div:
+        """Prepend extra fields to those inherently in the model."""
+        # Make it three column
+        row = Div(css_class="mt-4 row")
+        if not extra:
+            return row
+
+        n = min(len(extra), 3)
+        size = 12 // n
+        cols = [Div(css_class=f"col-{size}") for i in range(n)]
+
+        for i, x in enumerate(extra):
+            cols[i % len(cols)].append(Div(x, css_class="col"))
+        for col in cols:
+            row.append(col)
+        return row
+
+    def _layout(self, extra=[], appended_rows=[]):
+
+        extra_row = self._process_extras(extra)
+        tab = Tab(
             self.label,
+            extra_row,
             Div(
                 Div(
                     Field(
@@ -277,12 +298,16 @@ class ComponentModelForm(forms.Form):
                         css_class="hmf_model",
                         data_component=self.kind,
                     ),
-                    css_class="col",
+                    css_class="col-8",
                 ),
                 self._get_model_param_divs(),
                 css_class="mt-4 row",
             ),
         )
+
+        for row in appended_rows:
+            tab.append(row)
+        return tab
 
     def _add_default_model(self, model):
         # Allow a "None" class
@@ -320,7 +345,7 @@ class ComponentModelForm(forms.Form):
             self.fields[name].paramname = key
 
     def _get_model_param_divs(self):
-        param_div = Div()
+        param_div = Div(css_class="col-4")
         for name, field in self.fields.items():
             if name == f"{self.kind}_model":
                 continue
@@ -350,4 +375,6 @@ class FrameworkForm(forms.Form):
         if self.label is None:
             self.label = self.__class__.__name__
 
-        self._layout = Tab(self.label, Div(*self.fields.keys(), css_class="mt-4 col"))
+    def _layout(self, extra=[], appended_rows=[]):
+        keys = list(extra) + list(self.fields.keys())
+        return Tab(self.label, Div(*keys, css_class="mt-4 col"))

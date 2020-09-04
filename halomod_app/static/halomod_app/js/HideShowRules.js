@@ -27,8 +27,6 @@ $(function () {
 
     // Shadow out the delete button if there's only one left!
     if ($('[id*="-table-delete-button"]').length === 1) {
-        console.log("doing this...");
-        console.log($('[id*="-table-delete-button"]'));
         $('[id*="-table-delete-button"]').replaceWith(function () {
             return $('<span/>', {
                 href: this.href,
@@ -122,12 +120,12 @@ $(function () {
 
     //Change plotted image to whatever user clicks on
     $('#id_plot_choice').change(function () {
-        var src = $(this).val() + '.svg';
+        var src = 'plot/' + $(this).val() + '.svg';
         $('#the_image').attr('src', src);
 
         //Also change download link
         if ($('#id_download_choice').val() === 'pdf-current') {
-            var newlink = 'download/' + $('#id_plot_choice').val() + '.pdf';
+            var newlink = 'plot/' + $('#id_plot_choice').val() + '.pdf';
             $('a#plot_download').attr('href', newlink);
         }
     });
@@ -135,7 +133,7 @@ $(function () {
     //Change download link depending on what user wants to download
     $('#id_download_choice').change(function () {
         if ($(this).val() === 'pdf-current') {
-            var newlink = $('#id_plot_choice').val() + '.pdf'
+            var newlink = 'plot/' + $('#id_plot_choice').val() + '.pdf'
             $('a#plot_download').attr('href', newlink);
         }
         if ($(this).val() === 'ASCII') {

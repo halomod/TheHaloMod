@@ -1,12 +1,16 @@
 from django.urls import path
 from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from . import views
 
 urlpatterns = [
     path(
-        r"favicon\.ico",
-        RedirectView.as_view(url="http://hmfstatic.appspot.com/img/favicon.ico"),
+        "favicon.ico",
+        RedirectView.as_view(
+            url=staticfiles_storage.url("favicon.ico"), permanent=False
+        ),
+        name="favicon",
     ),
     path("create/", views.CalculatorInputCreate.as_view(), name="calculate"),
     path("create/<label>/", views.CalculatorInputCreate.as_view(), name="calculate",),
@@ -25,7 +29,7 @@ urlpatterns = [
     #     name='acknowledgments'
     # ),
     path("", views.ViewPlots.as_view(), name="image-page"),
-    path("<plottype>.<filetype>", views.plots, name="images"),
+    path("plot/<plottype>.<filetype>", views.plots, name="images"),
     path("download/allData.zip", views.data_output, name="data-output"),
     path("download/parameters.txt", views.header_txt, name="header-txt"),
     path("download/halogen.zip", views.halogen, name="halogen-output"),

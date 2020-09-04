@@ -29,6 +29,13 @@
     <!-- CSS -->
     <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
 
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'halomod_app/img/apple-touch-icon.png' %}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'halomod_app/img/favicon-32x32.png' %}"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'halomod_app/img/favicon-16x16.png' %}"/>
+    <link rel="manifest" href="{% static 'halomod_app/img/site.webmanifest' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'halomod_app/img/favicon.ico' %}"/>
+
     {% analytical_head_bottom %}
 </head>
 
@@ -40,7 +47,7 @@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">TheHaloMod</a>
+                <a class="navbar-brand" href="/"> <img src="{% static 'halomod_app/img/favicon-32x32.png' %}"> TheHaloMod</a>
             </div>
 
             <div class="collapse navbar-collapse" id="navcollapse1">

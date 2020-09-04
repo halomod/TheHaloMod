@@ -111,7 +111,11 @@ class TransferFramework(FrameworkForm):
 
     # Redshift at which to calculate the mass variance.
     z = forms.FloatField(
-        label="Redshift", initial=str(DEFAULT_MODEL["z"]), min_value=0, max_value=1100
+        label="Redshift",
+        initial=str(DEFAULT_MODEL["z"]),
+        min_value=0,
+        max_value=1100,
+        localize=True,
     )
 
     # Power spectral index
@@ -120,7 +124,8 @@ class TransferFramework(FrameworkForm):
         initial=f"{DEFAULT_MODEL['n']}",
         min_value=-4,
         max_value=3,
-        help_text="Spectral Index (note: modified by Base Cosmology)",
+        help_text="Spectral Index",
+        localize=True,
     )
 
     # Mass variance on a scale of 8Mpc
@@ -128,7 +133,7 @@ class TransferFramework(FrameworkForm):
         label=mark_safe("&#963<sub>8</sub>"),
         initial=f"{DEFAULT_MODEL['sigma_8']}",
         min_value=0.1,
-        help_text="RMS Mass Fluctuations (note: modified by Base Cosmology)",
+        help_text="RMS Mass Fluctuations",
         localize=True,
     )
 
@@ -179,6 +184,7 @@ class HMFForm(ComponentModelForm):
         ("Ishiyama", "Ishiyama (2015)"),
     ]
     module = fitting_functions
+    label = "HMF"
 
 
 class FilterForm(ComponentModelForm):
@@ -231,6 +237,7 @@ class MassDefinitionForm(ComponentModelForm):
         ("FOF", "Friends-of-Friends"),
     ]
     kind = "mdef"
+    label = "Mass Definition"
 
 
 class WDMAlterForm(ComponentModelForm):
@@ -328,6 +335,7 @@ class ExclusionForm(ComponentModelForm):
         ("DblEllipsoid_", "Ellipsoidal Haloes"),
         ("NgMatched_", "Density-Matched (Tinker 2005)"),
     ]
+    label = "Halo Exclusion"
 
 
 class HODForm(ComponentModelForm):
@@ -403,25 +411,25 @@ class FrameworkInput(CompositeForm):
     """Input parameters to the overall framework."""
 
     form_list = [
-        TracerHaloModelFramework,
-        MassFunctionFramework,
         CosmoForm,
-        TransferForm,
-        HMFForm,
         MassDefinitionForm,
+        TransferForm,
         TransferFramework,
         FilterForm,
         GrowthForm,
-        WDMFramework,
-        WDMForm,
-        WDMAlterForm,
+        HMFForm,
+        TracerHaloModelFramework,
+        HODForm,
+        MassFunctionFramework,
         BiasForm,
         HaloConcentrationForm,
         TracerConcentrationForm,
         HaloProfileForm,
         TracerProfileForm,
         ExclusionForm,
-        HODForm,
+        WDMFramework,
+        WDMForm,
+        WDMAlterForm,
     ]
 
     label = forms.CharField(
@@ -432,13 +440,7 @@ class FrameworkInput(CompositeForm):
     )
 
     def __init__(
-        self,
-        model_label=None,
-        current_models=None,
-        edit=False,
-        derive_from_obj=None,
-        *args,
-        **kwargs,
+        self, model_label=None, current_models=None, edit=False, *args, **kwargs,
     ):
 
         self.current_models = current_models
@@ -472,6 +474,20 @@ class FrameworkInput(CompositeForm):
         self.helper.label_class = "col-3 control-label"
         self.helper.field_class = "col-8"
 
+        # Here we modify some of the tab layouts because they are more obvious this way.
+        extras = {
+            CosmoForm: ("z", "n", "sigma_8"),
+            TransferForm: ("lnk_range", "dlnk", "takahashi"),
+            HMFForm: ("logm_range", "dlog10m"),
+            FilterForm: ("delta_c",),
+            WDMForm: ("wdm_mass", WDMAlterForm),
+        }
+        omit = [TransferFramework, MassFunctionFramework, WDMFramework, WDMAlterForm]
+
+        print(
+            self.forms[self.form_list.index(WDMAlterForm)]._layout().fields[-1].fields
+        )
+
         self.helper.layout = Layout(
             Div(
                 Div("label", css_class="col"),
@@ -492,7 +508,24 @@ class FrameworkInput(CompositeForm):
                 ),
                 css_class="row",
             ),
-            TabHolder(*[form._layout for form in self.forms]),
+            TabHolder(
+                *[
+                    form._layout(
+                        extra=[
+                            x
+                            for x in extras.get(self.form_list[i], ())
+                            if isinstance(x, str)
+                        ],
+                        appended_rows=[
+                            self.forms[self.form_list.index(x)]._layout().fields[-1]
+                            for x in extras.get(self.form_list[i], ())
+                            if not isinstance(x, str)
+                        ],
+                    )
+                    for i, form in enumerate(self.forms)
+                    if self.form_list[i] not in omit
+                ]
+            ),
         )
         self.helper.form_action = ""
 
@@ -770,7 +803,7 @@ class PlotChoice(forms.Form):
 
     download_choice = forms.ChoiceField(
         label=mark_safe(
-            '<a href="power_auto_tracer.pdf" id="plot_download">Download </a>'
+            '<a href="plot/power_auto_tracer.pdf" id="plot_download">Download </a>'
         ),
         choices=download_choices,
         initial="pdf-current",

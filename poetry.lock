@@ -210,7 +210,7 @@ description = "Extensions for Django"
 name = "django-extensions"
 optional = false
 python-versions = ">=3.5"
-version = "3.0.7"
+version = "3.0.8"
 
 [[package]]
 category = "main"
@@ -742,8 +742,8 @@ django-environ = [
     {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
 ]
 django-extensions = [
-    {file = "django-extensions-3.0.7.tar.gz", hash = "sha256:b49388a943368417d4c203d51866ca4ffe3011bb240679558521762c4b452b8a"},
-    {file = "django_extensions-3.0.7-py2.py3-none-any.whl", hash = "sha256:0ede618f3d933317737406c979753bb91436c3b3e93a452638a1483b624aa89d"},
+    {file = "django-extensions-3.0.8.tar.gz", hash = "sha256:a67747508ec39583892fbddf57e0b66b3f332a885ef5520698bc2e1cb351955a"},
+    {file = "django_extensions-3.0.8-py3-none-any.whl", hash = "sha256:c7c2ca48ccc2ecc4427c908cd3a6dc114fc7534092de51209b02f84ccafe648b"},
 ]
 django-range-slider = [
     {file = "django_range_slider-0.2.4.tar.gz", hash = "sha256:accb534671fb135242bad03010fabdad578ab020e51d17cc5c9d42a7da857985"},
