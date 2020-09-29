@@ -220,3 +220,14 @@ X_FRAME_OPTIONS = "DENY"
 EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
 )
+
+# ===============================================================================
+# REST Framework
+# ===============================================================================
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

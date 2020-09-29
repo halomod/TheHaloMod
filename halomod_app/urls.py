@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
+from rest_framework import routers
 
 from . import views
+
+router = routers.DefaultRouter()
 
 urlpatterns = [
     path(
@@ -38,4 +41,7 @@ urlpatterns = [
     path("report/", views.UserErrorReport.as_view(), name="report_model"),
     path("report/<model>/", views.UserErrorReport.as_view(), name="report_model"),
     path("about/", views.about.as_view(), name="about"),
+
+    # api
+    path("api/", include(router.urls))
 ]

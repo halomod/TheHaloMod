@@ -229,6 +229,17 @@ python-versions = "*"
 version = "0.4.0"
 
 [[package]]
+category = "main"
+description = "Web APIs for Django, made easy."
+name = "djangorestframework"
+optional = false
+python-versions = ">=3.5"
+version = "3.12.0"
+
+[package.dependencies]
+django = ">=2.2"
+
+[[package]]
 category = "dev"
 description = "A platform independent file lock."
 name = "filelock"
@@ -644,7 +655,8 @@ version = "5.2.0"
 brotli = ["brotli"]
 
 [metadata]
-content-hash = "480eb989a0eb6a6caf9716d2c842efc134144c9aa4cb986c451c0968e51eda8b"
+content-hash = "d0a55ea046a73edf31e23ef1bc9a6cfb88b73321df41251d27b13533dc2fa287"
+lock-version = "1.0"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -671,6 +683,7 @@ astropy = [
     {file = "astropy-4.0.1.post1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:e145c050408d911c104b2eab0c40a66853703346e18505d75240c383a34ec56a"},
     {file = "astropy-4.0.1.post1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:755077baecfbe2122ff56c1a0d61e905cc3ef43105ef0167968eb4ce3f4469b4"},
     {file = "astropy-4.0.1.post1-cp38-cp38-win32.whl", hash = "sha256:d8a8db0b69256b357ae5544bc31c4f21fad1f067d2cc3e9936c646dea5b7d908"},
+    {file = "astropy-4.0.1.post1-cp38-cp38-win_amd64.whl", hash = "sha256:6a3ea22bde401bf7da1ae1174a010352ce08f900c512893e0d3a6286b1f2863d"},
     {file = "astropy-4.0.1.post1.tar.gz", hash = "sha256:5c304a6c1845ca426e7bc319412b0363fccb4928cb4ba59298acd1918eec44b5"},
 ]
 cached-property = [
@@ -753,6 +766,10 @@ django-tabination = [
     {file = "django_tabination-0.4.0-py2-none-any.whl", hash = "sha256:3fbce76cf5bedfb797fb46bc1b2c2211fc92c9401d930a9d3e84ded516a409fd"},
     {file = "django_tabination-0.4.0-py3-none-any.whl", hash = "sha256:fca46a340719c4c1746b05c96acbcfb72465b8383d2e7284278219155e7d9c27"},
 ]
+djangorestframework = [
+    {file = "djangorestframework-3.12.0-py3-none-any.whl", hash = "sha256:7fb1c91a8f9aa5ccb39d1568925a6433659dacfc1af7ac757b293d6451ddb9e1"},
+    {file = "djangorestframework-3.12.0.tar.gz", hash = "sha256:9d5b07a2dd29b4fb18da2e6a888051f34b286b3bfc1c3fe885a17e16e389c569"},
+]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
@@ -781,16 +798,19 @@ kiwisolver = [
     {file = "kiwisolver-1.2.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:443c2320520eda0a5b930b2725b26f6175ca4453c61f739fef7a5847bd262f74"},
     {file = "kiwisolver-1.2.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:efcf3397ae1e3c3a4a0a0636542bcad5adad3b1dd3e8e629d0b6e201347176c8"},
     {file = "kiwisolver-1.2.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:fccefc0d36a38c57b7bd233a9b485e2f1eb71903ca7ad7adacad6c28a56d62d2"},
+    {file = "kiwisolver-1.2.0-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:be046da49fbc3aa9491cc7296db7e8d27bcf0c3d5d1a40259c10471b014e4e0c"},
     {file = "kiwisolver-1.2.0-cp36-none-win32.whl", hash = "sha256:60a78858580761fe611d22127868f3dc9f98871e6fdf0a15cc4203ed9ba6179b"},
     {file = "kiwisolver-1.2.0-cp36-none-win_amd64.whl", hash = "sha256:556da0a5f60f6486ec4969abbc1dd83cf9b5c2deadc8288508e55c0f5f87d29c"},
     {file = "kiwisolver-1.2.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:7cc095a4661bdd8a5742aaf7c10ea9fac142d76ff1770a0f84394038126d8fc7"},
     {file = "kiwisolver-1.2.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:c955791d80e464da3b471ab41eb65cf5a40c15ce9b001fdc5bbc241170de58ec"},
     {file = "kiwisolver-1.2.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:603162139684ee56bcd57acc74035fceed7dd8d732f38c0959c8bd157f913fec"},
+    {file = "kiwisolver-1.2.0-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:63f55f490b958b6299e4e5bdac66ac988c3d11b7fafa522800359075d4fa56d1"},
     {file = "kiwisolver-1.2.0-cp37-none-win32.whl", hash = "sha256:03662cbd3e6729f341a97dd2690b271e51a67a68322affab12a5b011344b973c"},
     {file = "kiwisolver-1.2.0-cp37-none-win_amd64.whl", hash = "sha256:4eadb361baf3069f278b055e3bb53fa189cea2fd02cb2c353b7a99ebb4477ef1"},
     {file = "kiwisolver-1.2.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:c31bc3c8e903d60a1ea31a754c72559398d91b5929fcb329b1c3a3d3f6e72113"},
     {file = "kiwisolver-1.2.0-cp38-cp38-manylinux1_i686.whl", hash = "sha256:d52b989dc23cdaa92582ceb4af8d5bcc94d74b2c3e64cd6785558ec6a879793e"},
     {file = "kiwisolver-1.2.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:e586b28354d7b6584d8973656a7954b1c69c93f708c0c07b77884f91640b7657"},
+    {file = "kiwisolver-1.2.0-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:38d05c9ecb24eee1246391820ed7137ac42a50209c203c908154782fced90e44"},
     {file = "kiwisolver-1.2.0-cp38-none-win32.whl", hash = "sha256:d069ef4b20b1e6b19f790d00097a5d5d2c50871b66d10075dab78938dc2ee2cf"},
     {file = "kiwisolver-1.2.0-cp38-none-win_amd64.whl", hash = "sha256:18d749f3e56c0480dccd1714230da0f328e6e4accf188dd4e6884bdd06bf02dd"},
     {file = "kiwisolver-1.2.0.tar.gz", hash = "sha256:247800260cd38160c362d211dcaf4ed0f7816afb5efe56544748b21d6ad6d17f"},
@@ -868,6 +888,7 @@ numba = [
     {file = "numba-0.50.1-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:c98b09d78144da2e5b8c7b690f80d12076a6b8e9af6e3c7f772a08cf04821cc1"},
     {file = "numba-0.50.1-cp38-cp38-win32.whl", hash = "sha256:3a4114dc1b9af491235ce30517913afe0a0a226117a924e7361d626f55e0e054"},
     {file = "numba-0.50.1-cp38-cp38-win_amd64.whl", hash = "sha256:5848d6bc5604664823a1681b17eb934147b24cfcb4df672be33315ff3f9f7afe"},
+    {file = "numba-0.50.1.tar.gz", hash = "sha256:89e81b51b880f9b18c82b7095beaccc6856fcf84ba29c4f0ced42e4e5748a3a7"},
 ]
 numpy = [
     {file = "numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69"},
@@ -926,6 +947,8 @@ pillow = [
     {file = "Pillow-7.2.0-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:5e51ee2b8114def244384eda1c82b10e307ad9778dac5c83fb0943775a653cd8"},
     {file = "Pillow-7.2.0-cp38-cp38-win32.whl", hash = "sha256:725aa6cfc66ce2857d585f06e9519a1cc0ef6d13f186ff3447ab6dff0a09bc7f"},
     {file = "Pillow-7.2.0-cp38-cp38-win_amd64.whl", hash = "sha256:a060cf8aa332052df2158e5a119303965be92c3da6f2d93b6878f0ebca80b2f6"},
+    {file = "Pillow-7.2.0-pp36-pypy36_pp73-macosx_10_10_x86_64.whl", hash = "sha256:9c87ef410a58dd54b92424ffd7e28fd2ec65d2f7fc02b76f5e9b2067e355ebf6"},
+    {file = "Pillow-7.2.0-pp36-pypy36_pp73-manylinux2010_x86_64.whl", hash = "sha256:e901964262a56d9ea3c2693df68bc9860b8bdda2b04768821e4c44ae797de117"},
     {file = "Pillow-7.2.0-pp36-pypy36_pp73-win32.whl", hash = "sha256:25930fadde8019f374400f7986e8404c8b781ce519da27792cbe46eabec00c4d"},
     {file = "Pillow-7.2.0.tar.gz", hash = "sha256:97f9e7953a77d5a70f49b9a48da7776dc51e9b738151b22dacf101641594a626"},
 ]
