@@ -146,7 +146,7 @@ class CalculatorInputEdit(CalculatorInputCreate):
 
 
 def delete_plot(request, label):
-    if len(request.session["objects"]) > 1:
+    if len(request.session.get("objects", {})) > 1:
 
         try:
             del request.session["objects"][label]
@@ -158,6 +158,11 @@ def delete_plot(request, label):
         except KeyError:
             pass
 
+        try:
+            del request.session["model_errors"][label]
+        except KeyError:
+            pass
+
     return HttpResponseRedirect("/")
 
 
@@ -165,6 +170,7 @@ def complete_reset(request):
     try:
         del request.session["objects"]
         del request.session["forms"]
+        del request.session["model_errors"]
     except KeyError:
         pass
 
@@ -279,7 +285,7 @@ def header_txt(request):
     # Import all the input form data so it can be written to file
     objects = request.session["objects"]
 
-    for i, (o, label) in enumerate(objects.items()):
+    for i, (label, o) in enumerate(objects.items()):
         s = io.BytesIO()
         s.write(toml.dumps(framework_to_dict(o)).encode())
         archive.writestr(f"{label}.toml", s.getvalue())
