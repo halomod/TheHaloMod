@@ -566,6 +566,7 @@ class FrameworkInput(CompositeForm):
                 previous=self.derivative_model, cls=cls, **frmwk_dict
             )
         except Exception as e:
+            logger.info(f"cls={cls}, previous={self.derivative_model}")
             logger.error(f"Got form error: {e}")
             raise forms.ValidationError(str(e))
 

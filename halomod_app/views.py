@@ -110,22 +110,32 @@ class CalculatorInputEdit(CalculatorInputCreate):
     def form_valid(self, form):
         result = super().form_valid(form)
 
+        old_label = self.kwargs["label"]
+        new_label = form.cleaned_data["label"]
+
         # If editing, and the label was changed, we need to remove the old label.
-        if form.cleaned_data["label"] != self.kwargs["label"]:
-            del self.request.session["objects"][self.kwargs["label"]]
+        if old_label != new_label:
+            # Delete all objects with the old label.
+            del self.request.session["objects"][old_label]
 
+            # Delete the model_errors
             try:
-                del self.request.session["forms"][self.kwargs["label"]]
+                del self.request.session["model_errors"][old_label]
             except KeyError:
-                # Special-case the original 'default', since it doesn't exist as a form
-                # at first.
-                if self.kwargs["label"] != "default":
-                    raise
+                if old_label != "default":
+                    if "model_errors" not in self.request.session:
+                        logger.error(
+                            f"When trying to delete {old_label} from model_errors, turns out model_errors hasn't yet been defined. User should see nothing wrong though."
+                        )
+                    elif old_label not in self.request.session["model_errors"]:
+                        logger.error(
+                            f"When trying to delete {old_label} from model_errors, turns out "
+                            f"{old_label} doesn't exist. User should see nothing wrong though."
+                        )
 
+            # Remove the old form.
             try:
-                self.request.session["forms"][form.cleaned_data["label"]].update(
-                    self.request.session["forms"][self.kwargs["label"]]
-                )
+                del self.request.session["forms"][old_label]
             except KeyError:
                 # Special-case the original 'default', since it doesn't exist as a form
                 # at first.
@@ -136,7 +146,7 @@ class CalculatorInputEdit(CalculatorInputCreate):
 
 
 def delete_plot(request, label):
-    if len(request.session["objects"]) > 1:
+    if len(request.session.get("objects", {})) > 1:
 
         try:
             del request.session["objects"][label]
@@ -148,6 +158,11 @@ def delete_plot(request, label):
         except KeyError:
             pass
 
+        try:
+            del request.session["model_errors"][label]
+        except KeyError:
+            pass
+
     return HttpResponseRedirect("/")
 
 
@@ -155,6 +170,7 @@ def complete_reset(request):
     try:
         del request.session["objects"]
         del request.session["forms"]
+        del request.session["model_errors"]
     except KeyError:
         pass
 
@@ -269,7 +285,7 @@ def header_txt(request):
     # Import all the input form data so it can be written to file
     objects = request.session["objects"]
 
-    for i, (o, label) in enumerate(objects.items()):
+    for i, (label, o) in enumerate(objects.items()):
         s = io.BytesIO()
         s.write(toml.dumps(framework_to_dict(o)).encode())
         archive.writestr(f"{label}.toml", s.getvalue())
