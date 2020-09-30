@@ -110,22 +110,32 @@ class CalculatorInputEdit(CalculatorInputCreate):
     def form_valid(self, form):
         result = super().form_valid(form)
 
+        old_label = self.kwargs["label"]
+        new_label = form.cleaned_data["label"]
+
         # If editing, and the label was changed, we need to remove the old label.
-        if form.cleaned_data["label"] != self.kwargs["label"]:
-            del self.request.session["objects"][self.kwargs["label"]]
+        if old_label != new_label:
+            # Delete all objects with the old label.
+            del self.request.session["objects"][old_label]
 
+            # Delete the model_errors
             try:
-                del self.request.session["forms"][self.kwargs["label"]]
+                del self.request.session["model_errors"][old_label]
             except KeyError:
-                # Special-case the original 'default', since it doesn't exist as a form
-                # at first.
-                if self.kwargs["label"] != "default":
-                    raise
+                if old_label != "default":
+                    if "model_errors" not in self.request.session:
+                        logger.error(
+                            f"When trying to delete {old_label} from model_errors, turns out model_errors hasn't yet been defined. User should see nothing wrong though."
+                        )
+                    elif old_label not in self.request.session["model_errors"]:
+                        logger.error(
+                            f"When trying to delete {old_label} from model_errors, turns out "
+                            f"{old_label} doesn't exist. User should see nothing wrong though."
+                        )
 
+            # Remove the old form.
             try:
-                self.request.session["forms"][form.cleaned_data["label"]].update(
-                    self.request.session["forms"][self.kwargs["label"]]
-                )
+                del self.request.session["forms"][old_label]
             except KeyError:
                 # Special-case the original 'default', since it doesn't exist as a form
                 # at first.
