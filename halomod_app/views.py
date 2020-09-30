@@ -200,7 +200,7 @@ def plots(request, filetype, plottype):
     """
     Chooses the type of plot needed and the filetype (pdf or png) and outputs it
     """
-    objects = request.session.get("objects", None)
+    objects = request.session.get("objects", {})
 
     keymap = {
         **utils.KEYMAP,
