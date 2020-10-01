@@ -59,10 +59,12 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         raise ValueError(f"The quantity {q} is not found in KEYMAP")
 
     errors = {}
+    ys = {}
     for i, (l, o) in enumerate(objects.items()):
         if not compare:
             try:
                 y = getattr(o, q)
+                ys[l] = y
                 if y is not None:
                     ax.plot(
                         getattr(o, x),
@@ -89,7 +91,7 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
 
             if ynum is not None and yden is not None:
                 y = ynum / yden
-
+                ys[l] = y
                 ax.plot(
                     getattr(o, x),
                     y,
@@ -123,6 +125,7 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         else:
             raise ValueError("plot_format should be png, pdf or svg!")
     except Exception:
+        logger.info(f"y-axis data: {ys}")
         logger.exception("Something went wrong in creating the image itself")
         raise
 
