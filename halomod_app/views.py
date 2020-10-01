@@ -12,15 +12,14 @@ from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-import hmf
-import halomod
-from halomod import wdm, TracerHaloModel
+from django.http import Http404
+
+from halomod import TracerHaloModel
 from tabination.views import TabView
 from hmf.helpers.cfg_utils import framework_to_dict
 import toml
 from . import forms
 from . import utils
-from . import version as calc_version
 
 logger = logging.getLogger(__name__)
 
@@ -218,28 +217,32 @@ def plots(request, filetype, plottype):
     """
     objects = request.session.get("objects", {})
 
-    keymap = {
-        **utils.KEYMAP,
-        "comparison_dndm": {
-            "xlab": utils.MLABEL,
-            "ylab": r"Ratio of Mass Functions $ \left(\frac{dn}{dM}\right) / \left( \frac{dn}{dM} \right)_{%s} $"
-            % list(objects.keys())[0],
-            "yscale": "log",
-            "basey": 2,
-        },
-        "comparison_fsigma": {
-            "xlab": utils.MLABEL,
-            "ylab": r"Ratio of Fitting Functions $f(\sigma)/ f(\sigma)_{%s}$"
-            % list(objects.keys())[0],
-            "yscale": "log",
-            "basey": 2,
-        },
-    }
+    if filetype not in ["png", "svg", "pdf", "zip"]:
+        logger.error(f"Strange 'filetype' extension requested: {filetype}. 404ing...")
+        raise Http404
+
     if not objects:
         return HttpResponseRedirect("/")
-
-    if filetype not in ["png", "svg", "pdf", "zip"]:
-        raise ValueError(f"{filetype} is not a valid plot filetype")
+    elif len(objects) > 1:
+        keymap = {
+            **utils.KEYMAP,
+            "comparison_dndm": {
+                "xlab": utils.MLABEL,
+                "ylab": r"Ratio of Mass Functions $ \left(\frac{dn}{dM}\right) / \left( \frac{dn}{dM} \right)_{%s} $"
+                % list(objects.keys())[0],
+                "yscale": "log",
+                "basey": 2,
+            },
+            "comparison_fsigma": {
+                "xlab": utils.MLABEL,
+                "ylab": r"Ratio of Fitting Functions $f(\sigma)/ f(\sigma)_{%s}$"
+                % list(objects.keys())[0],
+                "yscale": "log",
+                "basey": 2,
+            },
+        }
+    else:
+        keymap = utils.KEYMAP
 
     # Save the current plottype to the session for use elsewhere
     if filetype == "svg":
@@ -260,6 +263,9 @@ def plots(request, filetype, plottype):
         response["Content-Disposition"] = "attachment;filename=" + plottype + ".pdf"
     elif filetype == "zip":
         response = io.StringIO()
+    else:
+        logger.error(f"Strange 'filetype' extension requested: {filetype}. 404ing...")
+        raise Http404
 
     for k, v in errors.items():
         if k not in request.session["model_errors"]:
