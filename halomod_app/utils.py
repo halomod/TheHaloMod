@@ -64,11 +64,12 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         if not compare:
             try:
                 y = getattr(o, q)
-                ys[l] = y
+                mask = y > 1e-40 * y.max()
+                ys[l] = y[mask]
                 if y is not None:
                     ax.plot(
-                        getattr(o, x),
-                        y,
+                        getattr(o, x)[mask],
+                        y[mask],
                         color=f"C{i % 7}",
                         linestyle=lines[(i // 7) % 4],
                         label=l,
@@ -88,12 +89,13 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
                 errors[l] = e
 
             yden = getattr(comp_obj, q)
+            mask = yden > 0
 
             if ynum is not None and yden is not None:
-                y = ynum / yden
+                y = ynum[mask] / yden[mask]
                 ys[l] = y
                 ax.plot(
-                    getattr(o, x),
+                    getattr(o, x)[mask],
                     y,
                     color=f"C{(i+1) % 7}",
                     linestyle=lines[((i + 1) // 7) % 4],
