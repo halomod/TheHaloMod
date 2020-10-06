@@ -81,7 +81,7 @@ class CalculatorInputCreate(CalculatorInputBase):
         kwargs = super().get_form_kwargs()
         prev_label = self.kwargs.get("label", None)
 
-        forms = self.request.session.get("forms", None)
+        forms = self.request.session.get("forms", {})
 
         kwargs.update(
             current_models=self.request.session.get("objects", None),
