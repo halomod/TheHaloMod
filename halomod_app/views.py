@@ -282,14 +282,17 @@ def plots(request, filetype, plottype):
 
 
 def header_txt(request):
+    # Import all the input form data so it can be written to file
+    try:
+        objects = request.session["objects"]
+    except KeyError:
+        return HttpResponseRedirect("/")
+
     # Open up file-like objects for response
     response = HttpResponse(content_type="application/zip")
     response["Content-Disposition"] = "attachment; filename=all_plots.zip"
     buff = io.BytesIO()
     archive = zipfile.ZipFile(buff, "w", zipfile.ZIP_DEFLATED)
-
-    # Import all the input form data so it can be written to file
-    objects = request.session["objects"]
 
     for i, (label, o) in enumerate(objects.items()):
         s = io.BytesIO()
@@ -308,7 +311,10 @@ def header_txt(request):
 def data_output(request):
     # TODO: output HDF5 format
     # Import all the data we need
-    objects = request.session["objects"]
+    try:
+        objects = request.session["objects"]
+    except KeyError:
+        return HttpResponseRedirect("/")
 
     labels = list(objects.keys())
     objects = list(objects.values())
