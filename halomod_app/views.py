@@ -121,16 +121,15 @@ class CalculatorInputEdit(CalculatorInputCreate):
             try:
                 del self.request.session["model_errors"][old_label]
             except KeyError:
-                if old_label != "default":
-                    if "model_errors" not in self.request.session:
-                        logger.error(
-                            f"When trying to delete {old_label} from model_errors, turns out model_errors hasn't yet been defined. User should see nothing wrong though."
-                        )
-                    elif old_label not in self.request.session["model_errors"]:
-                        logger.error(
-                            f"When trying to delete {old_label} from model_errors, turns out "
-                            f"{old_label} doesn't exist. User should see nothing wrong though."
-                        )
+                if (
+                    old_label != "default"
+                    and "model_errors" not in self.request.session
+                ):
+                    logger.error(
+                        f"When trying to delete {old_label} from model_errors, turns out "
+                        f"model_errors hasn't yet been defined. User should see nothing "
+                        f"wrong though."
+                    )
 
             # Remove the old form.
             try:
