@@ -259,13 +259,13 @@ description = "A Halo Model calculator built on hmf"
 name = "halomod"
 optional = false
 python-versions = "*"
-version = "1.5.0"
+version = "2.0.0rc1"
 
 [package.dependencies]
 cached-property = "*"
 colossus = "*"
 hankel = "*"
-hmf = "*"
+hmf = ">=3.2.0"
 mpmath = "*"
 numpy = "*"
 scipy = "*"
@@ -299,7 +299,7 @@ description = "A halo mass function calculator"
 name = "hmf"
 optional = false
 python-versions = "*"
-version = "3.2.0"
+version = "3.3.0"
 
 [package.dependencies]
 astropy = ">=1.1"
@@ -762,16 +762,16 @@ gunicorn = [
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 halomod = [
-    {file = "halomod-1.5.0-py2.py3-none-any.whl", hash = "sha256:b8134381a61d96a9660025619f28c7f30798bef9be91c2819a958d27d70740d7"},
-    {file = "halomod-1.5.0.tar.gz", hash = "sha256:75c8c820c8d4e9e703c5a3a0fd09187857e6a208f29db40c9b0f055d63dafc4e"},
+    {file = "halomod-2.0.0rc1-py2.py3-none-any.whl", hash = "sha256:b1c0b69e9d686dbaefb58c9e3387ec3d23e0490574f9ba6719b28f91077cdda5"},
+    {file = "halomod-2.0.0rc1.tar.gz", hash = "sha256:0d80b15203955d0e6b6b47c82c891dbfdaa88490ea0792c49315042296078c06"},
 ]
 hankel = [
     {file = "hankel-1.1.0-py3-none-any.whl", hash = "sha256:c3a30389d47178d78bd744a8eeca25305ba7dfcbe0687fee5c3843bd5a48382e"},
     {file = "hankel-1.1.0.tar.gz", hash = "sha256:83764755e132a86c6c801f02722d544c69a469b2dda1a338eafb663c4c9053e4"},
 ]
 hmf = [
-    {file = "hmf-3.2.0-py2.py3-none-any.whl", hash = "sha256:ec323ad185c31ba641a755ef64e4e94bd4dde3229a8ac6ea6d598c0ccf8294b2"},
-    {file = "hmf-3.2.0.tar.gz", hash = "sha256:0b58f009413d86d255ea1026c0a09652bc62305326b878c05f5ead0643b87124"},
+    {file = "hmf-3.3.0-py2.py3-none-any.whl", hash = "sha256:5e56738349f31690cf2ab34c708c61ddb9a4a8c1206858d8712a7eda2b221cd1"},
+    {file = "hmf-3.3.0.tar.gz", hash = "sha256:4e9f7941ba841ad347458e4d285da1ed804354638100d5c56e547a08b70ed4c5"},
 ]
 identify = [
     {file = "identify-1.4.30-py2.py3-none-any.whl", hash = "sha256:f9f84a4ff44e29b9cc23c4012c2c8954089860723f80ce63d760393e5f197108"},
