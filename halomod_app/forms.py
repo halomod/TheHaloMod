@@ -555,6 +555,10 @@ class FrameworkInput(CompositeForm):
         # Check mass limits
         mrange = cleaned_data.get("logm_range")
         dlogm = cleaned_data.get("dlog10m")
+
+        if dlogm is None:
+            raise forms.ValidationError("dlogm must be provided")
+
         if dlogm > (float(mrange[1]) - float(mrange[0])) / 2:
             raise forms.ValidationError("Mass step-size must be less than its range.")
 
