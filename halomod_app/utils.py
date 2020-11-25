@@ -64,9 +64,10 @@ def create_canvas(objects, q: str, d: dict, plot_format: str = "png"):
         if not compare:
             try:
                 y = getattr(o, q)
-                mask = y > 1e-40 * y.max()
-                ys[l] = y[mask]
                 if y is not None:
+                    mask = y > 1e-40 * y.max()
+                    ys[l] = y[mask]
+
                     ax.plot(
                         getattr(o, x)[mask],
                         y[mask],
