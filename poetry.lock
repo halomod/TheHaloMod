@@ -305,7 +305,7 @@ description = "A halo mass function calculator"
 name = "hmf"
 optional = false
 python-versions = "*"
-version = "3.3.0"
+version = "3.3.1"
 
 [package.dependencies]
 astropy = ">=1.1"
@@ -791,8 +791,8 @@ hankel = [
     {file = "hankel-1.1.0.tar.gz", hash = "sha256:83764755e132a86c6c801f02722d544c69a469b2dda1a338eafb663c4c9053e4"},
 ]
 hmf = [
-    {file = "hmf-3.3.0-py2.py3-none-any.whl", hash = "sha256:5e56738349f31690cf2ab34c708c61ddb9a4a8c1206858d8712a7eda2b221cd1"},
-    {file = "hmf-3.3.0.tar.gz", hash = "sha256:4e9f7941ba841ad347458e4d285da1ed804354638100d5c56e547a08b70ed4c5"},
+    {file = "hmf-3.3.1-py2.py3-none-any.whl", hash = "sha256:fd048307f0740ff3b6939dd4c0f35779a5e03dc1626198269a67b50c7f2d509e"},
+    {file = "hmf-3.3.1.tar.gz", hash = "sha256:3d4af197c3147df715c1af5411bb6467e3ebbc2b08ba7f31489faca0b67f5a27"},
 ]
 identify = [
     {file = "identify-1.5.10-py2.py3-none-any.whl", hash = "sha256:cc86e6a9a390879dcc2976cef169dd9cc48843ed70b7380f321d1b118163c60e"},
