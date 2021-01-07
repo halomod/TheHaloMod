@@ -289,13 +289,15 @@ def header_txt(request):
 
     # Open up file-like objects for response
     response = HttpResponse(content_type="application/zip")
-    response["Content-Disposition"] = "attachment; filename=all_plots.zip"
+    response["Content-Disposition"] = "attachment; filename=THM-parameters.zip"
     buff = io.BytesIO()
     archive = zipfile.ZipFile(buff, "w", zipfile.ZIP_DEFLATED)
 
     for i, (label, o) in enumerate(objects.items()):
         s = io.BytesIO()
-        s.write(toml.dumps(framework_to_dict(o)).encode())
+        s.write(
+            toml.dumps(framework_to_dict(o), encoder=toml.TomlNumpyEncoder()).encode()
+        )
         archive.writestr(f"{label}.toml", s.getvalue())
         s.close()
 
@@ -320,7 +322,7 @@ def data_output(request):
 
     # Open up file-like objects for response
     response = HttpResponse(content_type="application/zip")
-    response["Content-Disposition"] = "attachment; filename=all_plots.zip"
+    response["Content-Disposition"] = "attachment; filename=THM-output-data.zip"
     buff = io.BytesIO()
     archive = zipfile.ZipFile(buff, "w", zipfile.ZIP_DEFLATED)
 
@@ -330,7 +332,7 @@ def data_output(request):
 
             s = io.BytesIO()
 
-            s.write(f"# [0] {utils.XLABELS[kind]}".encode())
+            s.write(f"# [0] {utils.XLABELS[kind]} ".encode())
 
             items = {
                 k: utils.KEYMAP[k]["ylab"]
@@ -338,7 +340,6 @@ def data_output(request):
                 if utils.KEYMAP[k]["xlab"] == utils.XLABELS[kind]
             }
 
-            s.write("# ".encode())
             for j, (label, ylab) in enumerate(items.items()):
                 if getattr(o, label) is not None:
                     s.write(f"[{j+1}] {ylab}\t".encode())
