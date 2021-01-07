@@ -338,9 +338,11 @@ def data_output(request):
                 if utils.KEYMAP[k]["xlab"] == utils.XLABELS[kind]
             }
 
+            s.write("# ".encode())
             for j, (label, ylab) in enumerate(items.items()):
                 if getattr(o, label) is not None:
-                    s.write(f"# [{j+1}] {ylab}".encode())
+                    s.write(f"[{j+1}] {ylab}\t".encode())
+            s.write("\n".encode())
 
             out = np.array(
                 [getattr(o, kind)]
