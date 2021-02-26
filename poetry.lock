@@ -48,7 +48,7 @@ description = "Code for Anisotropies in the Microwave Background"
 name = "camb"
 optional = false
 python-versions = ">=3.6"
-version = "1.2.0"
+version = "1.3.0"
 
 [package.dependencies]
 scipy = ">=1.0"
@@ -265,18 +265,19 @@ description = "A Halo Model calculator built on hmf"
 name = "halomod"
 optional = false
 python-versions = "*"
-version = "2.0.0"
+version = "2.0.1"
 
 [package.dependencies]
 cached-property = "*"
 colossus = "*"
 hankel = "*"
-hmf = ">=3.3.0"
+hmf = ">=3.3.4"
 mpmath = "*"
 numpy = "*"
 scipy = "*"
 
 [package.extras]
+all = ["camb (>1.0.0)"]
 dev = ["Sphinx (>=1.7.5)", "numpydoc (>=0.8.0)", "nbsphinx", "coverage (>=4.5.1)", "pytest (>=3.5.1)", "pytest-cov (>=2.5.1)", "pre-commit", "mpmath (>=1.0.0)", "numba"]
 docs = ["Sphinx (>=1.7.5)", "numpydoc (>=0.8.0)", "nbsphinx"]
 tests = ["coverage (>=4.5.1)", "pytest (>=3.5.1)", "pytest-cov (>=2.5.1)", "pre-commit", "mpmath (>=1.0.0)", "numba"]
@@ -305,11 +306,10 @@ description = "A halo mass function calculator"
 name = "hmf"
 optional = false
 python-versions = "*"
-version = "3.3.0"
+version = "3.3.4"
 
 [package.dependencies]
 astropy = ">=1.1"
-camb = ">=1.0.0"
 click = "*"
 deprecation = "*"
 numpy = ">=1.6.2"
@@ -318,8 +318,9 @@ scipy = ">=0.12.0"
 toml = ">=0.10.1"
 
 [package.extras]
+all = ["camb (>=1.0.0)", "colossus (>=1.2.1)", "emcee (>=3.0)"]
 cosmo = ["colossus (>=1.2.1)"]
-dev = ["Sphinx (>=1.7.5)", "numpydoc (>=0.8.0)", "nbsphinx", "coverage (>=4.5.1)", "pytest (>=3.5.1)", "pytest-cov (>=2.5.1)", "pre-commit", "mpmath (>=1.0.0)", "colossus (>=1.2.16)", "halomod (1.4.6.dev58)"]
+dev = ["Sphinx (>=1.7.5)", "numpydoc (>=0.8.0)", "nbsphinx", "coverage (>=4.5.1)", "pytest (>=3.5.1)", "pytest-cov (>=2.5.1)", "pre-commit", "mpmath (>=1.0.0)", "colossus (>=1.2.16)", "halomod (1.4.6.dev58)", "bump2version"]
 docs = ["Sphinx (>=1.7.5)", "numpydoc (>=0.8.0)", "nbsphinx"]
 fit = ["emcee (>=3.0)"]
 tests = ["coverage (>=4.5.1)", "pytest (>=3.5.1)", "pytest-cov (>=2.5.1)", "pre-commit", "mpmath (>=1.0.0)", "colossus (>=1.2.1)", "halomod (1.4.6.dev58)"]
@@ -587,7 +588,7 @@ description = "Computer algebra system (CAS) in Python"
 name = "sympy"
 optional = false
 python-versions = ">=3.6"
-version = "1.7"
+version = "1.7.1"
 
 [package.dependencies]
 mpmath = ">=0.19"
@@ -663,7 +664,7 @@ version = "5.2.0"
 brotli = ["brotli"]
 
 [metadata]
-content-hash = "19fb428287046aa43552433bc8cf0d194f4d8686869661eaec19796b79456b9c"
+content-hash = "89cad4d73fdf2c2bc245c57462d9f50b3710965cec90fcb28b2ebecae52bd1a7"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -698,7 +699,7 @@ cached-property = [
     {file = "cached_property-1.5.2-py2.py3-none-any.whl", hash = "sha256:df4f613cf7ad9a588cc381aaf4a512d26265ecebd5eb9e1ba12f1319eb85a6a0"},
 ]
 camb = [
-    {file = "camb-1.2.0.tar.gz", hash = "sha256:20861a45921e4e18267e445d1aca861e0694371029719ba3666ba1feeb3cfe87"},
+    {file = "camb-1.3.0.tar.gz", hash = "sha256:ff5c83394da9b89f2b6ca44ad4072f9761cb2d23f845ebb3b25a4f4398172c76"},
 ]
 certifi = [
     {file = "certifi-2020.11.8-py2.py3-none-any.whl", hash = "sha256:1f422849db327d534e3d0c5f02a263458c3955ec0aae4ff09b95f195c59f4edd"},
@@ -783,16 +784,16 @@ gunicorn = [
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 halomod = [
-    {file = "halomod-2.0.0-py2.py3-none-any.whl", hash = "sha256:f44fa849664c65b4d31c634a0a6d40548e1a7d92967e5a991b2970c56265629d"},
-    {file = "halomod-2.0.0.tar.gz", hash = "sha256:47768f7af499368bc2db94a190ee1ef0c0e325656e6efb5f7215d339b91e46ab"},
+    {file = "halomod-2.0.1-py2.py3-none-any.whl", hash = "sha256:0aa16cc5804b9ec89a0ef13a4e1417a10e8c39fa93c619a6c341e481a36c74d0"},
+    {file = "halomod-2.0.1.tar.gz", hash = "sha256:67c1c76d29152d87ffcaf85631f3094d13ed91684418ae18b9f788055c65e0df"},
 ]
 hankel = [
     {file = "hankel-1.1.0-py3-none-any.whl", hash = "sha256:c3a30389d47178d78bd744a8eeca25305ba7dfcbe0687fee5c3843bd5a48382e"},
     {file = "hankel-1.1.0.tar.gz", hash = "sha256:83764755e132a86c6c801f02722d544c69a469b2dda1a338eafb663c4c9053e4"},
 ]
 hmf = [
-    {file = "hmf-3.3.0-py2.py3-none-any.whl", hash = "sha256:5e56738349f31690cf2ab34c708c61ddb9a4a8c1206858d8712a7eda2b221cd1"},
-    {file = "hmf-3.3.0.tar.gz", hash = "sha256:4e9f7941ba841ad347458e4d285da1ed804354638100d5c56e547a08b70ed4c5"},
+    {file = "hmf-3.3.4-py2.py3-none-any.whl", hash = "sha256:7a79a26712cc5cc4ee85b6e795ee49d68b656bdef75269496aa27e7038e2e813"},
+    {file = "hmf-3.3.4.tar.gz", hash = "sha256:0e61675508e01d14f71ebffca395ad09dbf32df392ab51f09404f24bb7ab3e9b"},
 ]
 identify = [
     {file = "identify-1.5.10-py2.py3-none-any.whl", hash = "sha256:cc86e6a9a390879dcc2976cef169dd9cc48843ed70b7380f321d1b118163c60e"},
@@ -1092,8 +1093,8 @@ sqlparse = [
     {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
 ]
 sympy = [
-    {file = "sympy-1.7-py3-none-any.whl", hash = "sha256:09aa4b3075e505108cb84785ba358e58a53d9596c8c71f07b613958b9150c481"},
-    {file = "sympy-1.7.tar.gz", hash = "sha256:9104004669cda847f38cfd8cd16dd174952c537349dbae740fea5331d2b3a51b"},
+    {file = "sympy-1.7.1-py3-none-any.whl", hash = "sha256:c986df98babfb9f5ddea49ba7b69398f6d1cfada5ae0dc0431691cddaff851f6"},
+    {file = "sympy-1.7.1.tar.gz", hash = "sha256:a3de9261e97535b83bb8607b0da2c7d03126650fafea2b2789657b229c246b2e"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
