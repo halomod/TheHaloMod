@@ -174,8 +174,16 @@ KEYMAP = {
         "ylab": r"$\rho(<M)$, $M_{\odot}h^{2}Mpc^{-3}$",
         "yscale": "linear",
     },
-    "how_big": {"xlab": MLABEL, "ylab": r"Box Size, $L$ Mpc$h^{-1}$", "yscale": "log",},
-    "sigma": {"xlab": MLABEL, "ylab": r"Mass Variance, $\sigma$", "yscale": "linear",},
+    "how_big": {
+        "xlab": MLABEL,
+        "ylab": r"Box Size, $L$ Mpc$h^{-1}$",
+        "yscale": "log",
+    },
+    "sigma": {
+        "xlab": MLABEL,
+        "ylab": r"Mass Variance, $\sigma$",
+        "yscale": "linear",
+    },
     "lnsigma": {"xlab": MLABEL, "ylab": r"$\ln(\sigma^{-1})$", "yscale": "linear"},
     "n_eff": {
         "xlab": MLABEL,
@@ -190,7 +198,11 @@ KEYMAP = {
     },
     "delta_k": {"xlab": KLABEL, "ylab": r"$\Delta(k)$", "yscale": "log"},
     "halo_bias": {"xlab": MLABEL, "ylab": "Halo Bias", "yscale": "log"},
-    "cmz_relation": {"xlab": MLABEL, "ylab": "Halo Concentration", "yscale": "log",},
+    "cmz_relation": {
+        "xlab": MLABEL,
+        "ylab": "Halo Concentration",
+        "yscale": "log",
+    },
     "corr_auto_tracer": {
         "xlab": RLABEL,
         "ylab": r"Tracer correlation, $\xi_{2h}(r)$",
@@ -336,7 +348,11 @@ KEYMAP = {
         "ylab": r"$P_{\rm halofit}(k)$ [Mpc$^3 h^{-3}$]",
         "yscale": "log",
     },
-    "radii": {"xlab": MLABEL, "ylab": r"Radius [Mpc/$h$]", "yscale": "log",},
+    "radii": {
+        "xlab": MLABEL,
+        "ylab": r"Radius [Mpc/$h$]",
+        "yscale": "log",
+    },
     "tracer_cmz_relation": {
         "xlab": MLABEL,
         "ylab": r"Tracer Concentration",
