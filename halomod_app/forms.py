@@ -86,13 +86,21 @@ class TransferForm(ComponentModelForm):
         ("CAMB", "CAMB"),
         ("EH_BAO", "Eisenstein-Hu (1998) (with BAO)"),
         ("EH_NoBAO", "Eisenstein-Hu (1998) (no BAO)"),
-        ("BBKS", "BBKS (1986)",),
+        (
+            "BBKS",
+            "BBKS (1986)",
+        ),
         ("BondEfs", "Bond-Efstathiou"),
     ]
     module = transfer_models
     ignore_fields = ["camb_params"]
 
-    field_kwargs = {"fname": {"type": forms.FileField, "label": "",}}
+    field_kwargs = {
+        "fname": {
+            "type": forms.FileField,
+            "label": "",
+        }
+    }
 
     def clean_transfer_fname(self):
         thefile = self.cleaned_data.get("transfer_fname", None)
@@ -440,7 +448,12 @@ class FrameworkInput(CompositeForm):
     )
 
     def __init__(
-        self, model_label=None, current_models=None, edit=False, *args, **kwargs,
+        self,
+        model_label=None,
+        current_models=None,
+        edit=False,
+        *args,
+        **kwargs,
     ):
 
         self.current_models = current_models
@@ -721,12 +734,24 @@ class PlotChoice(forms.Form):
             (
                 # Matter
                 ("corr_auto_matter", "Matter-matter correlation function"),
-                ("corr_2h_auto_matter", "2-halo matter-matter correlation function",),
-                ("corr_1h_auto_matter", "1-halo matter-matter correlation function",),
+                (
+                    "corr_2h_auto_matter",
+                    "2-halo matter-matter correlation function",
+                ),
+                (
+                    "corr_1h_auto_matter",
+                    "1-halo matter-matter correlation function",
+                ),
                 # Tracer
                 ("corr_auto_tracer", "Tracer-tracer correlation function"),
-                ("corr_2h_auto_tracer", "2-halo tracer-tracer correlation function",),
-                ("corr_1h_auto_tracer", "1-halo tracer-tracer correlation function",),
+                (
+                    "corr_2h_auto_tracer",
+                    "2-halo tracer-tracer correlation function",
+                ),
+                (
+                    "corr_1h_auto_tracer",
+                    "1-halo tracer-tracer correlation function",
+                ),
                 (
                     "corr_1h_cs_auto_tracer",
                     "1-halo central-satellite tracer correlation function",

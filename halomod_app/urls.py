@@ -13,7 +13,11 @@ urlpatterns = [
         name="favicon",
     ),
     path("create/", views.CalculatorInputCreate.as_view(), name="calculate"),
-    path("create/<label>/", views.CalculatorInputCreate.as_view(), name="calculate",),
+    path(
+        "create/<label>/",
+        views.CalculatorInputCreate.as_view(),
+        name="calculate",
+    ),
     path("edit/<label>/", views.CalculatorInputEdit.as_view(), name="calculate"),
     path("delete/<label>/", views.delete_plot, name="delete"),
     path("restart/", views.complete_reset, name="restart"),
