@@ -21,7 +21,7 @@ repos:
         additional_dependencies:
           - flake8-rst-docstrings
 -   repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.3.0
     hooks:
     - id: black
 -   repo: https://github.com/pre-commit/pygrep-hooks
