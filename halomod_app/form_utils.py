@@ -37,7 +37,6 @@ class RangeSlider(forms.TextInput):
             return """[ """ + self.minimum + """,""" + self.maximum + """ ]"""
 
     def render(self, name, value, attrs=None, renderer=None):
-
         s = super(RangeSlider, self).render(name, value, attrs)
         elem_id = re.findall(r'id_([A-Za-z0-9_\./\\-]*)"', s)[0]
         val = self.get_initial(value)
@@ -286,7 +285,6 @@ class ComponentModelForm(forms.Form):
         return row
 
     def _layout(self, extra=[], appended_rows=[]):
-
         extra_row = self._process_extras(extra)
         tab = Tab(
             self.label,

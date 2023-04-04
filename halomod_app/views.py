@@ -145,7 +145,6 @@ class CalculatorInputEdit(CalculatorInputCreate):
 
 def delete_plot(request, label):
     if len(request.session.get("objects", {})) > 1:
-
         try:
             del request.session["objects"][label]
         except KeyError:
@@ -329,7 +328,6 @@ def data_output(request):
     # Write out mass-based, k-based and r-based data files
     for i, o in enumerate(objects):
         for kind in utils.XLABELS:
-
             s = io.BytesIO()
 
             s.write(f"# [0] {utils.XLABELS[kind]} ".encode())

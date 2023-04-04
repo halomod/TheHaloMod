@@ -455,7 +455,6 @@ class FrameworkInput(CompositeForm):
         *args,
         **kwargs,
     ):
-
         self.current_models = current_models
         self.derivative_model_label = model_label
         if current_models:
